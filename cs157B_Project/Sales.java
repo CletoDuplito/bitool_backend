@@ -1,5 +1,8 @@
 package cs157B_Project;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,16 +10,16 @@ import javax.persistence.Id;
 
 public class Sales {
 
-	 private String product;
-	 private String store;
-	 private int dateTime;
+	 private List<String> product = new ArrayList<String>();
+	 private List<String> store = new ArrayList<String>();
+	 private List<Integer> dateTime = new ArrayList<Integer>();
 	 private int salesTotal;
 	 
-	public int getDateTime() {
+	public List<Integer> getDateTime() {
 		return dateTime;
 	}
 	
-	public String getProduct(){
+	public List<String> getProduct(){
 		return product;
 	}
 	
@@ -24,16 +27,16 @@ public class Sales {
 		return salesTotal;
 	}
 	
-	public String getStore() {
+	public List<String> getStore() {
 		return store;
 	}
 	
 	public void setDateTime(int aDate) {
-		dateTime = aDate;
+		dateTime.add(aDate);
 	}
 	
 	public void setProduct(String aProduct) {
-		product = aProduct;
+		product.add(aProduct);
 	}
 	
 	public void setSalesTotal(int sales) {
@@ -41,7 +44,7 @@ public class Sales {
 	}
 	
 	public void setStore(String aStore) {
-		store = aStore;
+		store.add(aStore);
 	}
 	 
 
