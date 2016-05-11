@@ -10,7 +10,7 @@
    
   </head>
   
-  <body ng-cloak ng-app="app">
+  <body class="ng-cloak" ng-app="app">
     <div class="container" ng-controller="OptionsCtrl">
     	<h1>BI tool</h1>
 	    <div class="row" >
@@ -21,7 +21,9 @@
 			
 			<!-- Option section -->
 			<div class="col-md-5" >
-				
+				<div class="alert alert-danger" role="alert" ng-show="dimensionError">
+					<strong>Oh snap!</strong> Please select at least 2 dimensions.
+				</div>
 				<form class="form">
 			   		<div class="form-group col-md-3">
 					<!-- Action -->
@@ -41,7 +43,7 @@
 			      	<!-- Dimension Section -->
 			      	<h3>Dimensions</h3>
 					<div class="checkbox">
-					  <label><input type="checkbox" ng-model="form.dimension.datetime" ng-click="dimensionCheck(form.dimension)" checked>Date_time</label>
+					  <label><input type="checkbox" ng-model="form.dimension.date_time" ng-click="dimensionCheck(form.dimension)" checked>Date_time</label>
 					</div>
 					<div class="checkbox">
 					  <label><input type="checkbox" ng-model="form.dimension.store" ng-click="dimensionCheck(form.dimension)" checked>Store</label>
@@ -49,9 +51,7 @@
 					<div class="checkbox">
 					  <label><input type="checkbox" ng-model="form.dimension.product" ng-click="dimensionCheck(form.dimension)" checked>Product</label>
 					</div> <!-- END Dimension Section -->
-					<div class="alert alert-danger" role="alert" ng-show="disable">
-					  <strong>Oh snap!</strong> Please select at least 2 dimensions.
-					</div>
+					
 				</div>
 				<div class="form-group col-md-5">
 					<!-- Attribute Section -->
@@ -59,7 +59,7 @@
 					<!-- Date-time Attribute -->
 					<div> 
 					  	<label>
-					  		<select class="c-select" ng-model="form.category.datetime">
+					  		<select class="c-select" ng-model="form.category.date_time">
 							  <option selected value="year">Year</option>
 							  <option value="quarter">Quarter</option>
 							  <option value="month">Month</option>
@@ -76,7 +76,7 @@
 							  <option value="store_county">County</option>
 							  <option value="city">City</option>
 							  <option value="store_street_address">Street Addess</option>
-							  <option value="name">name</option>
+							  <option value="name">Name</option>
 							</select>
 						</label>
 					</div>
@@ -93,10 +93,25 @@
 							</select>
 						</label>
 					</div> <!-- END Attribute Section -->
+
 				</div>
-				
+				<!-- Cardinal Values -->
+				<div class="col-md-12">
+					<h3>Cardinal Values</h3>
+					<div class="alert alert-danger" role="alert" ng-show="dimensionError">
+						<strong>Oh snap!</strong> Please select at least 1 cardinal value per attribute.
+					</div>
+					<div class="form-group col-md-4" ng-repeat="(attr, cardinalArr) in form.cardinals">
+						<h4>{{attr}}</h4>
+						<div class="checkbox" ng-repeat="card in cardinalArr" >
+						  	<label >
+						  		<input type="checkbox" ng-model="form.cardinals[attr][card]" value="{{card}}">{{card}}
+						  	</label>
+						</div>
+					</div>
+				</div>
 				<div class="col-md-12">	
-					<button type="submit" class="btn btn-default" onclick="window.location.hash = '#/'">Reset Cube</button>
+					<button type="submit" class="btn btn-default" onclick="window.location.hash = '#'">Reset Cube</button>
 					<button type="submit" class="btn btn-primary pull-right" ng-click="changeView(form)" ng-disabled="disable">Submit</button>
 				</div>
 			</form> 
