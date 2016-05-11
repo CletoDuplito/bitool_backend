@@ -103,7 +103,7 @@ public class BITool {
    
    	
    	
-	public JSONArray rollUpByHierarchy(String product, String store, String dateTime) throws SQLException, JSONException
+	public JSONArray rollUpByHierarchy(String product, String store, int dateTime) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -166,7 +166,7 @@ public class BITool {
    	
    	
  
-	public JSONArray rollUpByDimension(String dimension1, String dimension2) throws SQLException, JSONException
+	public JSONArray rollUpByDimension(ArrayList<String> dimensions) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -227,7 +227,7 @@ public class BITool {
    	
 
    
-	public JSONArray drillDownByHierarchy(String product, String store, String dateTime) throws SQLException, JSONException
+	public JSONArray drillDownByHierarchy(String product, String store, int dateTime) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -243,11 +243,16 @@ public class BITool {
    			//Execute a query that drills down by climbing down the hierarchy
    			System.out.println("Creating statement...");
 		   	 String sql;
-		     sql = "SELECT p.brand, s.city, t.year, sum(f.dollar_sales) AS sales_total" +
+		     /*sql = "SELECT + p.brand, s.city, t.year, sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product p, Store s, Date_time t, Sales f" +
 		    		"WHERE f.product_key = p.product_key AND" +
 		    		"f.store_key = s.store_key AND f.time_key = t.time_key" +
-		    		"GROUP BY p.brand, s.city, t.year";
+		    		"GROUP BY p.brand, s.city, t.year";*/
+		     sql = "SELECT " + product + ", " + store + ", " + dateTime + ", " + "sum(f.dollar_sales) AS sales_total" +
+			   		"FROM Product, Store, Date_time, Sales" +
+			   		"WHERE Sales.product_key = Product.product_key AND" +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+			   		"GROUP BY " + product + ", " + store + ", " + dateTime;
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
@@ -286,7 +291,7 @@ public class BITool {
    	
 	
  
-	public JSONArray drillDownAddDimension(List<String> dimensions) throws SQLException, JSONException
+	public JSONArray drillDownAddDimension(ArrayList<String> dimensions) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -351,7 +356,7 @@ public class BITool {
  	
 
 
-	public JSONArray slice(List<String> parameters) throws SQLException, JSONException
+	public JSONArray slice(ArrayList<String> parameters) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -413,7 +418,7 @@ public class BITool {
  	
 	
 	
-	public JSONArray dice(List<String> parameters) throws SQLException, JSONException
+	public JSONArray dice(ArrayList<String> parameters) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -476,6 +481,8 @@ public class BITool {
    	
    	
    	
+	
+	
    public static void main(String[] args) {
 	   Connection conn = null;
 	   Statement stmt = null;
