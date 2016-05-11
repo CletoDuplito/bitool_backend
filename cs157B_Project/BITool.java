@@ -182,16 +182,24 @@ public class BITool {
    			//Execute a query that rolls up by reducing a dimension
    			System.out.println("Creating statement...");
 		   	 String sql;
+		   	 //Extracts all dimension-attributes names and formats them into Select statement
+		   	 String select_statement = "";
+		   	 for (int i = 0; i < dimensions.size(); i++) {
+		   		 if (i == 0) select_statement = "" + dimensions.get(i);
+		   		 else {
+		   			select_statement = select_statement + ", " + dimensions.get(i);
+		   		 }
+		   	 }
 		     /*sql = "SELECT s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product p, Store s, Date_time t, Sales f" +
 		    		"WHERE f.product_key = p.product_key AND" +
 		    		"f.store_key = s.store_key AND f.time_key = t.time_key" +
 		    		"GROUP BY s.store_state, t.year";*/
-		   	sql = "SELECT " + dimension1 + ", " + dimension2 + ", " + "sum(f.dollar_sales) AS sales_total" +
+		   	sql = "SELECT " + select_statement + ", " + "sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product, Store, Date_time, Sales" +
 		    		"WHERE Sales.product_key = Product.product_key AND" +
 		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
-		    		"GROUP BY " + dimension1 + "," + dimension2;
+		    		"GROUP BY " + select_statement;
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
@@ -307,11 +315,23 @@ public class BITool {
    			//Execute a query that drills down by adding a dimension
 		      System.out.println("Creating statement...");
 		   	 String sql;
-		   	 sql = "SELECT p.package_size, p.category, s.city,  s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
+		   	 String select_statement = "";
+		   	 for (int i = 0; i < dimensions.size(); i++) {
+		   		 if (i == 0) select_statement = "" + dimensions.get(i);
+		   		 else {
+		   			select_statement = select_statement + ", " + dimensions.get(i);
+		   		 }
+		   	 }
+		   	 /*sql = "SELECT p.package_size, p.category, s.city,  s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product p, Store s, Date_time t, Sales f" +
 		    		"WHERE f.product_key = p.product_key AND" +
 		    		"f.store_key = s.store_key AND f.time_key = t.time_key" +
-		    		"GROUP BY p.package_size, p.category, s.city, s.store_state, t.year";
+		    		"GROUP BY p.package_size, p.category, s.city, s.store_state, t.year";*/
+		   	sql = "SELECT " + select_statement + ", " + "sum(f.dollar_sales) AS sales_total" +
+		    		"FROM Product, Store, Date_time, Sales" +
+		    		"WHERE Sales.product_key = Product.product_key AND" +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+		    		"GROUP BY " + select_statement;
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
