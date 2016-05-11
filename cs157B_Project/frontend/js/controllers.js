@@ -3,10 +3,12 @@ var appControllers = angular.module("appControllers",[]);
 
 
 appControllers.
-	controller("CentreCubeCtrl",["$scope","$http","$routeParams","$timeout","FormDataParser", function($scope,$http,$routeParams,$timeout,formDataParser) {
+	controller("CentreCubeCtrl",["$scope","$http","$routeParams","$timeout","FormData", function($scope,$http,$routeParams,$timeout,formData) {
 		var url = "api/bi/parser";
 		// var url = "data/data.json";
-		var parsedParam = formDataParser.parseData( formDataParser.defaultFormValues );
+		var parsedParam = formData.parseData( formData.defaultFormValues );
+
+		parsedParam["action"] = "central_cube"; //default action
 
 		$http.get(url, {params: parsedParam}).success(function(data){
 			$scope.data = data;
@@ -29,10 +31,30 @@ appControllers.
 			});
 		}
 	}]).	
-	controller("OptionsCtrl",["$scope","$http","$routeParams","FormDataParser", function($scope,$http,$routeParams,formDataParser) {
+	controller("OptionsCtrl",["$scope","$http","$routeParams","FormData", function($scope,$http,$routeParams,formData) {
+		$scope.form = formData.defaultFormValues;
+		$scope.disable = false;
+		
+
 		$scope.changeView = function(d) {
 			//broadcast it to centrecubctrl
-			$scope.$broadcast("data_changed", formDataParser.parseData(d) );
+			$scope.$broadcast("data_changed", formData.parseData(d) );
 		};
-		$scope.form = formDataParser.defaultFormValues;
+
+		$scope.dimensionCheck = function(dim) {
+			var keys = Object.keys(dim);
+			var count = 0;
+			$scope.disable = false;
+
+			for(var i = 0; i < keys.length; i++) {
+				var currentValue = dim[ keys[i] ];
+				if( currentValue == false ) {
+					count++;
+				}
+			}
+			if(count >= 2) {
+				$scope.disable = true;
+			}
+		}
+
 	}]);
