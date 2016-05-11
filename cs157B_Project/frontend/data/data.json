@@ -1,0 +1,30 @@
+{
+	"dimension": ["Product","Store","Date_time"],
+	"attributes": ["category","state", "year"],
+	"data": [
+		{
+		 	"key": ["Drinks","AZ","1994"],
+		 	"value": "11312"
+		}, 
+		{
+		 	"key": ["Drinks","AZ","1995"],
+		 	"value": "1009838"
+		},
+		{
+		 	"key": ["Drinks","CA","1994"],
+		 	"value": "100231"
+		}, 
+		{
+		 	"key": ["Drinks","CA","1995"],
+		 	"value": "109999"
+		},
+		{
+		 	"key": ["Drinks","CO","1994"],
+		 	"value": "100678"
+		}, 
+		{
+		 	"key": ["Drinks","CO","1995"],
+		 	"value": "10000000"
+		}
+	]
+}
