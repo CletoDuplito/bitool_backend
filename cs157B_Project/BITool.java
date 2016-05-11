@@ -11,6 +11,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 
 public class BITool {
 
@@ -21,46 +25,65 @@ public class BITool {
    //  Database credentials
    static final String USER = "username";
    static final String PASS = "password";
-/* //Register JDBC driver
-   Class.forName("com.mysql.jdbc.Driver");*/
 
    
-   	@PUT
-	@Path("/{id}/{new_price}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Sales> centralCube(@PathParam("id") int orderId, @PathParam("new_price") double newPrice) throws SQLException
+   /**
+    * @param product
+    * @param store
+    * @param dateTime
+    * @return
+    * @throws SQLException
+    * @throws JSONException
+    */
+	public JSONArray centralCube(String product, String store, int dateTime) throws SQLException, JSONException
 	{
    		Connection conn = null;
-   		Statement statement = null;
+   		PreparedStatement statement = null;
    		ResultSet rs = null;
-   		List<Sales> sales = new ArrayList<Sales>();
-   	    
+   		//List<Sales> sales = new ArrayList<Sales>();
+   	    JSONArray jsonArray = new JSONArray();
    		try {
 		    //Open a connection
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
    			
-   			statement = conn.createStatement();
+		    
    			//Execute a query that returns the central cube
    			System.out.println("Creating statement...");
 		   	 String sql;
-		     sql = "SELECT p.category, s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
+		    /* sql = "SELECT p.category, s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
 		   		"FROM Product p, Store s, Date_time t, Sales f" +
 		   		"WHERE f.product_key = p.product_key AND" +
 		   		"f.store_key = s.store_key AND f.time_key = t.time_key" +
-		   		"GROUP BY p.category, s.store_state, t.year";
+		   		"GROUP BY p.category, s.store_state, t.year";*/
+		   	sql = "SELECT " + product + ", " + store + ", " + dateTime + ", " + "sum(f.dollar_sales) AS sales_total" +
+			   		"FROM Product, Store, Date_time, Sales" +
+			   		"WHERE Sales.product_key = Product.product_key AND" +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+			   		"GROUP BY " + product +", " + store +", " + dateTime;
+		   	 statement = conn.prepareStatement(sql);
+		     statement.setString(1,  product);
+		     statement.setString(2, store);
+		     statement.setInt(3, dateTime);
 		     rs = statement.executeQuery(sql);
+		     
 		
 		     //Extract data from result set
 		     while(rs.next()){
+		    	int total_rows = rs.getMetaData().getColumnCount();
+		    	JSONObject obj = new JSONObject();
+		    	for (int i = 0; i < total_rows; i++) {
+		    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+		    				rs.getObject(i + 1));
+		    		jsonArray.put(obj);
+		    	}
 		        //Retrieve by column name
-		    	Sales sale = new Sales();
+		    /*	Sales sale = new Sales();
 		    	sale.setProduct(rs.getString("p.category"));
 		        sale.setStore(rs.getString("s.store_state"));
 		        sale.setDateTime(rs.getInt("t.year"));
 		        sale.setSalesTotal(rs.getInt("sales_total"));
-		        sales.add(sale);
+		        sales.add(sale);*/
 		
 		        //Display values
 		        /*System.out.print("Category: " + category);
@@ -75,22 +98,18 @@ public class BITool {
 			  System.out.println("Closing....");
 			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
 		   } //end finally 
-   		return sales; 
+   		return jsonArray; 
 	} //central cube
    
    	
    	
- 	@PUT
-	@Path("/{id}/{new_price}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Sales> rollUp(@PathParam("id") int orderId, @PathParam("new_price") double newPrice) throws SQLException
+	public JSONArray rollUpByHierarchy(String product, String store, int dateTime) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
    		ResultSet rs = null;
-   		List<Sales> sales = new ArrayList<Sales>();
-   	    
+   		//List<Sales> sales = new ArrayList<Sales>();
+   		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
 		    System.out.println("Connecting to database...");
@@ -100,22 +119,34 @@ public class BITool {
    			//Execute a query that rolls up the central cube by rolling up the hierarchy
    			System.out.println("Creating statement...");
 		   	String sql;
-		    sql = "SELECT p.department, s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
+		    /*sql = "SELECT p.department, s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product p, Store s, Date_time t, Sales f" +
 		    		"WHERE f.product_key = p.product_key AND" +
 		    		"f.store_key = s.store_key AND f.time_key = t.time_key" +
-		    		"GROUP BY p.department, s.store_state, t.year";
+		    		"GROUP BY p.department, s.store_state, t.year";*/
+		    sql = "SELECT " + product + ", " + store + ", " + dateTime + ", " + "sum(f.dollar_sales) AS sales_total" +
+			   		"FROM Product, Store, Date_time, Sales" +
+			   		"WHERE Sales.product_key = Product.product_key AND" +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+			   		"GROUP BY " + product + ", " + store + ", " + dateTime;
 		    rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
 		     while(rs.next()){
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
 		        //Retrieve by column name
-		    	Sales sale = new Sales();
+		    /*	Sales sale = new Sales();
 		    	sale.setProduct(rs.getString("p.department"));
 		        sale.setStore(rs.getString("s.store_state"));
 		        sale.setDateTime(rs.getInt("t.year"));
 		        sale.setSalesTotal(rs.getInt("sales_total"));
-		        sales.add(sale);
+		        sales.add(sale);*/
 		
 		        //Display values
 		        /* System.out.print("Department: " + department);
@@ -130,22 +161,18 @@ public class BITool {
 			  System.out.println("Closing....");
 			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
 		   } //end finally 
-   		return sales; 
+   		return jsonArray; 
 	} //rollup by hierarchy
    	
    	
- 	
- 	@PUT
-	@Path("/{id}/{new_price}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Sales> rollUpByDimension(@PathParam("id") int orderId, @PathParam("new_price") double newPrice) throws SQLException
+ 
+	public JSONArray rollUpByDimension(ArrayList<String> dimensions) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
    		ResultSet rs = null;
-   		List<Sales> sales = new ArrayList<Sales>();
-   	    
+   		//List<Sales> sales = new ArrayList<Sales>();
+   		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
 		    System.out.println("Connecting to database...");
@@ -155,21 +182,41 @@ public class BITool {
    			//Execute a query that rolls up by reducing a dimension
    			System.out.println("Creating statement...");
 		   	 String sql;
-		     sql = "SELECT s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
+		   	 //Extracts all dimension-attributes names and formats them into Select statement
+		   	 String select_statement = "";
+		   	 for (int i = 0; i < dimensions.size(); i++) {
+		   		 if (i == 0) select_statement = "" + dimensions.get(i);
+		   		 else {
+		   			select_statement = select_statement + ", " + dimensions.get(i);
+		   		 }
+		   	 }
+		     /*sql = "SELECT s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product p, Store s, Date_time t, Sales f" +
 		    		"WHERE f.product_key = p.product_key AND" +
 		    		"f.store_key = s.store_key AND f.time_key = t.time_key" +
-		    		"GROUP BY s.store_state, t.year";
+		    		"GROUP BY s.store_state, t.year";*/
+		   	sql = "SELECT " + select_statement + ", " + "sum(f.dollar_sales) AS sales_total" +
+		    		"FROM Product, Store, Date_time, Sales" +
+		    		"WHERE Sales.product_key = Product.product_key AND" +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+		    		"GROUP BY " + select_statement;
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
 		     while(rs.next()){
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
 		        //Retrieve by column name
-		    	Sales sale = new Sales();
+		    	/*Sales sale = new Sales();
 		        sale.setStore(rs.getString("s.store_state"));
 		        sale.setDateTime(rs.getInt("t.year"));
 		        sale.setSalesTotal(rs.getInt("sales_total"));
-		        sales.add(sale);
+		        sales.add(sale);*/
 		
 		        //Display values
 		        /*System.out.print("Store_state: " + storeState);
@@ -183,22 +230,18 @@ public class BITool {
 			  System.out.println("Closing....");
 			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
 		   } //end finally 
-   		return sales; 
+   		return jsonArray; 
 	} //roll up by dimension
    	
 
-   	
- 	@PUT
-	@Path("/{id}/{new_price}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Sales> drillDown(@PathParam("id") int orderId, @PathParam("new_price") double newPrice) throws SQLException
+   
+	public JSONArray drillDownByHierarchy(String product, String store, int dateTime) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
    		ResultSet rs = null;
-   		List<Sales> sales = new ArrayList<Sales>();
-   	    
+   		//List<Sales> sales = new ArrayList<Sales>();
+   		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
 		    System.out.println("Connecting to database...");
@@ -208,22 +251,34 @@ public class BITool {
    			//Execute a query that drills down by climbing down the hierarchy
    			System.out.println("Creating statement...");
 		   	 String sql;
-		     sql = "SELECT p.brand, s.city, t.year, sum(f.dollar_sales) AS sales_total" +
+		     /*sql = "SELECT + p.brand, s.city, t.year, sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product p, Store s, Date_time t, Sales f" +
 		    		"WHERE f.product_key = p.product_key AND" +
 		    		"f.store_key = s.store_key AND f.time_key = t.time_key" +
-		    		"GROUP BY p.brand, s.city, t.year";
+		    		"GROUP BY p.brand, s.city, t.year";*/
+		     sql = "SELECT " + product + ", " + store + ", " + dateTime + ", " + "sum(f.dollar_sales) AS sales_total" +
+			   		"FROM Product, Store, Date_time, Sales" +
+			   		"WHERE Sales.product_key = Product.product_key AND" +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+			   		"GROUP BY " + product + ", " + store + ", " + dateTime;
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
 		     while(rs.next()){
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
 		        //Retrieve by column name
-		    	Sales sale = new Sales();
+		    	/*Sales sale = new Sales();
 		    	sale.setProduct(rs.getString("p.brand"));
 		        sale.setStore(rs.getString("s.city"));
 		        sale.setDateTime(rs.getInt("t.year"));
 		        sale.setSalesTotal(rs.getInt("sales_total"));
-		        sales.add(sale);
+		        sales.add(sale);*/
 		
 		        
 		        //Display values
@@ -239,21 +294,18 @@ public class BITool {
 			  System.out.println("Closing....");
 			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
 		   } //end finally 
-   		return sales; 
-	} //drill down
+   		return jsonArray; 
+	} //drill down by hierarchy
    	
 	
- 	@PUT
-	@Path("/{id}/{new_price}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Sales> drillDownAddDimension(@PathParam("id") int orderId, @PathParam("new_price") double newPrice) throws SQLException
+ 
+	public JSONArray drillDownAddDimension(ArrayList<String> dimensions) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
    		ResultSet rs = null;
-   		List<Sales> sales = new ArrayList<Sales>();
-   	    
+   		//List<Sales> sales = new ArrayList<Sales>();
+   		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
 		    System.out.println("Connecting to database...");
@@ -263,24 +315,44 @@ public class BITool {
    			//Execute a query that drills down by adding a dimension
 		      System.out.println("Creating statement...");
 		   	 String sql;
-		   	 sql = "SELECT p.package_size, p.category, s.city,  s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
+		   	 String select_statement = "";
+		   	 for (int i = 0; i < dimensions.size(); i++) {
+		   		 if (i == 0) select_statement = "" + dimensions.get(i);
+		   		 else {
+		   			select_statement = select_statement + ", " + dimensions.get(i);
+		   		 }
+		   	 }
+		   	 /*sql = "SELECT p.package_size, p.category, s.city,  s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
 		    		"FROM Product p, Store s, Date_time t, Sales f" +
 		    		"WHERE f.product_key = p.product_key AND" +
 		    		"f.store_key = s.store_key AND f.time_key = t.time_key" +
-		    		"GROUP BY p.package_size, p.category, s.city, s.store_state, t.year";
+		    		"GROUP BY p.package_size, p.category, s.city, s.store_state, t.year";*/
+		   	sql = "SELECT " + select_statement + ", " + "sum(f.dollar_sales) AS sales_total" +
+		    		"FROM Product, Store, Date_time, Sales" +
+		    		"WHERE Sales.product_key = Product.product_key AND" +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+		    		"GROUP BY " + select_statement;
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
 		     while(rs.next()){
+		    	 
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
 		        //Retrieve by column name
-		    	Sales sale = new Sales();
+		    	/*Sales sale = new Sales();
 		    	sale.setProduct(rs.getString("p.package_size"));
 		    	sale.setProduct(rs.getString("p.category"));  //check how to deal with two product strings
 		        sale.setStore(rs.getString("s.city"));      //check how to deal with two store strings
 		        sale.setStore(rs.getString("s.store_state"));
 		        sale.setDateTime(rs.getInt("t.year"));
 		        sale.setSalesTotal(rs.getInt("sales_total"));
-		        sales.add(sale);
+		        sales.add(sale);*/
 	
 	
 		         //Display values
@@ -298,22 +370,19 @@ public class BITool {
 			  System.out.println("Closing....");
 			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
 		   } //end finally 
-   		return sales; 
+   		return jsonArray; 
 	} //drill down by adding dimension
    	
  	
 
- 	@PUT
-	@Path("/{id}/{new_price}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Sales> slice(@PathParam("id") int orderId, @PathParam("new_price") double newPrice) throws SQLException
+
+	public JSONArray slice(ArrayList<String> parameters) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
    		ResultSet rs = null;
-   		List<Sales> sales = new ArrayList<Sales>();
-   	    
+   		//List<Sales> sales = new ArrayList<Sales>();
+   		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
 		    System.out.println("Connecting to database...");
@@ -333,13 +402,21 @@ public class BITool {
 		
 		     //Extract data from result set
 		     while(rs.next()){
+		    	 
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
 		        //Retrieve by column name
-		    	Sales sale = new Sales();
+		    	/*Sales sale = new Sales();
 		    	sale.setStore(rs.getString("s.city"));
 		        sale.setStore(rs.getString("s.store_state"));
 		        sale.setStore(rs.getString("s.store_zip"));
 		        sale.setSalesTotal(rs.getInt("sales_total"));
-		        sales.add(sale);
+		        sales.add(sale);*/
 	
 		         //Display values
 		         /*System.out.print("City: " + storeCity);
@@ -354,22 +431,20 @@ public class BITool {
 			  System.out.println("Closing....");
 			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
 		   } //end finally 
-   		return sales; 
+   		return jsonArray; 
 	} //slice
  	
  	
  	
- 	@PUT
-	@Path("/{id}/{new_price}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Sales> dice(@PathParam("id") int orderId, @PathParam("new_price") double newPrice) throws SQLException
+	
+	
+	public JSONArray dice(ArrayList<String> parameters) throws SQLException, JSONException
 	{
    		Connection conn = null;
    		Statement statement = null;
    		ResultSet rs = null;
-   		List<Sales> sales = new ArrayList<Sales>();
-   	    
+   		//List<Sales> sales = new ArrayList<Sales>();
+   		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
 		    System.out.println("Connecting to database...");
@@ -390,13 +465,21 @@ public class BITool {
 		
 		     //Extract data from result set
 		     while(rs.next()){
+		    	 
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
 		        //Retrieve by column name
-		    	Sales sale = new Sales();
+		    	/*Sales sale = new Sales();
 		    	sale.setProduct(rs.getString("p.category"));
 		        sale.setStore(rs.getString("s.store_state"));
 		        sale.setDateTime(rs.getInt("t.year"));
 		        sale.setSalesTotal(rs.getInt("sales_total"));
-		        sales.add(sale);
+		        sales.add(sale);*/
 	
 	
 		         //Display values
@@ -412,12 +495,14 @@ public class BITool {
 			  System.out.println("Closing....");
 			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
 		   } //end finally 
-   		return sales; 
+   		return jsonArray; 
 	} //dice
   
    	
    	
    	
+	
+	
    public static void main(String[] args) {
 	   Connection conn = null;
 	   Statement stmt = null;
