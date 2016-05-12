@@ -1,4 +1,4 @@
-package PO;
+package cs157B_Project;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class BITool {
 
    //  Database credentials
    static final String USER = "root";
-   static final String PASS = "sesame";
+   static final String PASS = "cs157b";
 
    /**
     * A method that parses the parameter by splitting between '.' character
@@ -101,6 +101,7 @@ public class BITool {
    	    JSONArray jsonArray = new JSONArray();
    		try {
 		    //Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
    			
@@ -165,6 +166,7 @@ public class BITool {
    		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
    			
@@ -217,6 +219,7 @@ public class BITool {
    		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
 		    
@@ -278,6 +281,7 @@ public class BITool {
    		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
 		    
@@ -328,6 +332,7 @@ public class BITool {
    		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
    			
@@ -387,6 +392,7 @@ public class BITool {
    		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
    			
@@ -456,6 +462,7 @@ public class BITool {
    		JSONArray jsonArray = new JSONArray();
    		try {
    			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
 		    System.out.println("Connecting to database...");
 		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
    			
