@@ -6,7 +6,7 @@ var app = angular.module("app", ["ngRoute","appControllers"]);
 app.factory("FormData", function(){
 
 	var defaultFormValues = {		//init form values
-		action: "roll_up",
+		action: "central_cube",
 		dimension: {
 			date_time: true,
 			store: true,

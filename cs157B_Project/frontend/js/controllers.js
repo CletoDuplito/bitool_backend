@@ -6,12 +6,13 @@ appControllers.
 		var url = "data/data.json";
 		var parsedParam = formData.parseParam( formData.defaultFormValues );
 
-		parsedParam["action"] = "central_cube"; //default action
+		// parsedParam["action"] = "central_cube"; //default action
 
 		$http.get(url, {params: parsedParam}).success(function(data){
 			$scope.data = data;
 			// console.log(data);
 			// $scope.cardinals = formData.parseCardinalValues(data);
+			$scope.$emit("current_cube", data);
 			$scope.$emit("new_cardinals", formData.parseCardinalValues(data));
 			// console.log($scope.cardinals);
 		});
@@ -40,12 +41,24 @@ appControllers.
 		$scope.dimensionErrorDice = false;
 		$scope.cardinalError = false;
 
+		$scope.currentCube = {};
+
+		$scope.$on("current_cube", function(e, data) {		//listen for current cube
+			$scope.currentCube = data;
+		})
+
 		$scope.$on("new_cardinals", function(e, cardinals) {		//listen for cardinal values
 			$scope.form.cardinals = cardinals;
 		})
 
 		$scope.changeView = function(d) {
+			// console.log(d);
+			// console.log($scope.currentCube);
+			// console.log("action is: ", determineAction(d,$scope.currentCube) );
+
 			var parsedFormParams = formData.parseParam(d);
+			parsedFormParams["action"] = determineAction(d,$scope.currentCube);
+			
 			$scope.cardinalError = parsedFormParams.cardinalError;
 			console.log(parsedFormParams);
 			//broadcast it to centrecubctrl
@@ -53,13 +66,15 @@ appControllers.
 		};
 
 		$scope.dimensionCheck = function(form) {
-			console.log(form);
+			// console.log(form);
 			var dim = form.dimension;
 			var keys = Object.keys(dim);
 			var uncheckedDimension = 0;
 			$scope.disable = false;
 			$scope.dimensionError = false;
 			$scope.dimensionErrorDice = false;
+			$scope.dimensionErrorSlice = false;
+			$scope.dimensionErrorCentralCube = false;
 
 			for(var i = 0; i < keys.length; i++) {
 				var currentValue = dim[ keys[i] ];
@@ -71,10 +86,33 @@ appControllers.
 			if(uncheckedDimension >= 2 && form["action"] == "dice") {		//unselected is more than or equal to 2
 				$scope.disable = true;
 				$scope.dimensionErrorDice = true;
+			} else if(uncheckedDimension < 2 && form["action"] == "slice") { //selected more than 2 dimension when doing slide operation
+				$scope.disable = true;
+				$scope.dimensionErrorSlice = true;
+			} else if (uncheckedDimension > 0 && form["action"] == "central_cube") { //no dimension selected
+				$scope.disable = true;
+				$scope.dimensionErrorCentralCube = true;
 			} else if (uncheckedDimension > 2) {
 				$scope.disable = true;
 				$scope.dimensionError = true;
 			}
 
+		}
+
+		function determineAction(newData, currentData) {
+			// console.log(newData, currentData);
+			var selectedDim = 0;
+			var currentDim = currentData.dimension.length;
+			Object.keys(newData.dimension).forEach(function(value, key) {
+				if(newData.dimension[value]) {
+					selectedDim++;
+				}
+			});
+
+			if(selectedDim != currentDim){	//by dimention
+				return newData["action"] + "_dimension";
+			} else {
+				return newData["action"] + "_hierachy";
+			}
 		}
 	}]);

@@ -24,8 +24,14 @@
 				<div class="alert alert-danger" role="alert" ng-show="dimensionErrorDice">
 					<strong>Oh snap!</strong> Please select at least 2 dimensions.
 				</div>
+				<div class="alert alert-danger" role="alert" ng-show="dimensionErrorSlice">
+					<strong>Oh snap!</strong> Please select only 1 dimension.
+				</div>
 				<div class="alert alert-danger" role="alert" ng-show="dimensionError">
 					<strong>Oh snap!</strong> Please select at least 1 dimension.
+				</div>
+				<div class="alert alert-danger" role="alert" ng-show="dimensionErrorCentralCube">
+					<strong>Oh snap!</strong> Please select all 3 dimensions.
 				</div>
 				<form class="form">
 			   		<div class="form-group col-md-3">
@@ -34,6 +40,7 @@
 					<div >
 					  	<label>
 					  		<select class="c-select" ng-model="form.action" ng-change="dimensionCheck(form)">
+					  		  <option value="central_cube">Central Cube</option>
 							  <option value="roll_up">Roll Up</option>
 							  <option value="drill_down">Drill Down</option>
 							  <option value="slice">Slice</option>
@@ -114,7 +121,7 @@
 					</div>
 				</div>
 				<div class="col-md-12">	
-					<button type="submit" class="btn btn-default" onclick="window.location.hash = '#'">Reset Cube</button>
+					<!-- <button type="submit" class="btn btn-default" onclick="window.location.hash = '#'">Reset Cube</button> -->
 					<button type="submit" class="btn btn-primary pull-right" ng-click="changeView(form)" ng-disabled="disable">Submit</button>
 				</div>
 			</form> 
