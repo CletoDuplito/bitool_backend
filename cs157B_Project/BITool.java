@@ -472,9 +472,19 @@ public class BITool {
 		   	 }
 		   	 String where_clause = "";
 		   	 for (int i = 0; i < parameters.size(); i++) {
-		   		 if (i == 0) where_clause = "" + parameters.get(i);
+		   		 String parameter = parameters.get(i);
+		   		 String lastParameter = parameters.get(i - 1);
+		   		 if (i == 0) {
+		   			 where_clause = "" + parameter;
+		   		 }
 		   		 else {
-		   			 where_clause = where_clause + ", " + parameters.get(i);
+		   			/*if (parameter.charAt(lastParameter.length() - 1) == ')') {
+		   				 where_clause = where_clause + " AND " + parameter;
+		   			}
+		   			else {
+		   				where_clause = where_clause + " " + parameter;
+		   			}*/
+		   			where_clause = where_clause + " AND " + parameter;
 		   		 }
 		   	 }
 		     sql = "SELECT " + select_statement + ", sum(sales.dollar_sales) AS sales_total " +
