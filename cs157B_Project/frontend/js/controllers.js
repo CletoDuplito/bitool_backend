@@ -2,8 +2,8 @@ var appControllers = angular.module("appControllers",[]);
 
 appControllers.
 	controller("CentreCubeCtrl",["$scope","$http","$routeParams","$timeout","FormData", function($scope,$http,$routeParams,$timeout,formData) {
-		// var url = "api/bi/parser";
-		var url = "data/data.json";
+		var url = "api/bi/parser";
+		// var url = "data/data.json";
 		var parsedParam = formData.parseParam( formData.defaultFormValues );
 
 		// parsedParam["action"] = "central_cube"; //default action
