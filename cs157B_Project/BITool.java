@@ -240,12 +240,11 @@ public class BITool {
     
     
  
-  public JSONArray rollUpByDimension(ArrayList<String> dimensions) throws SQLException, JSONException
+  public JSONArray rollUpByDimension(ArrayList<String> dimensions) throws Exception
   {
       Connection conn = null;
       Statement statement = null;
       ResultSet rs = null;
-      //List<Sales> sales = new ArrayList<Sales>();
       JSONArray jsonArray = new JSONArray();
       try {
         //Open a connection
@@ -264,39 +263,30 @@ public class BITool {
             select_statement = select_statement + ", " + dimensions.get(i);
            }
          }
-         /*sql = "SELECT s.store_state, t.year, sum(f.dollar_sales) AS sales_total" +
-            "FROM Product p, Store s, Date_time t, Sales f" +
-            "WHERE f.product_key = p.product_key AND" +
-            "f.store_key = s.store_key AND f.time_key = t.time_key" +
-            "GROUP BY s.store_state, t.year";*/
-        sql = "SELECT " + select_statement + ", " + "sum(f.dollar_sales) AS sales_total" +
-            "FROM Product, Store, Date_time, Sales" +
-            "WHERE Sales.product_key = Product.product_key AND" +
-            "Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key" +
+        sql = "SELECT " + select_statement + ", " + "sum(sales.dollar_sales) AS sales_total " +
+            "FROM Product, Store, Date_time, Sales " +
+            "WHERE Sales.product_key = Product.product_key AND " +
+            "Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
             "GROUP BY " + select_statement;
          rs = statement.executeQuery(sql);
     
          //Extract data from result set
-         while(rs.next()){
-           int total_rows = rs.getMetaData().getColumnCount();
-            JSONObject obj = new JSONObject();
-            for (int i = 0; i < total_rows; i++) {
-              obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
-                  rs.getObject(i + 1));
-              jsonArray.put(obj);
-            }
-            //Retrieve by column name
-          /*Sales sale = new Sales();
-            sale.setStore(rs.getString("s.store_state"));
-            sale.setDateTime(rs.getInt("t.year"));
-            sale.setSalesTotal(rs.getInt("sales_total"));
-            sales.add(sale);*/
-    
-            //Display values
-            /*System.out.print("Store_state: " + storeState);
-             System.out.print(", Year: " + year);
-             System.out.print(", Sales_total: " + salesTotal);*/
-         }
+         
+         
+         ArrayList<String> attr = new ArrayList<>();
+         attr.add(parseParam(dimensions.get(0)));
+         attr.add(parseParam(dimensions.get(1)));
+         attr.add(parseParam(dimensions.get(2)));
+         
+         ToJSON rsToJSON = new ToJSON();
+
+
+
+         
+         jsonArray = rsToJSON.toJSONArray(rs, attr);
+         
+         
+         
       } //end try
        finally{
         if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
@@ -309,7 +299,7 @@ public class BITool {
     
 
    
-  public JSONArray drillDownByHierarchy(String product, String store, int dateTime) throws SQLException, JSONException
+  public JSONArray drillDownByHierarchy(String product, String store, String dateTime) throws SQLException, JSONException
   {
       Connection conn = null;
       Statement statement = null;
