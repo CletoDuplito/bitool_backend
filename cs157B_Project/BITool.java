@@ -29,6 +29,11 @@ public class BITool {
    static final String USER = "root";
    static final String PASS = "cs157b";
 
+   /**
+    * A method that parses the parameter by splitting between '.' character
+    * @param param the parameter to be parsed
+    * @return the parsed parameter string
+    */
    public String parseParam(String param){
 	    String[] text = null;
 	    String st = "";
@@ -41,6 +46,15 @@ public class BITool {
 	  }
    
    
+   /**
+    * Converts the result set from sql query to JSON object
+    * @param product the product dimension to be added to attributes array
+    * @param store the store dimension to be added to attributes array
+    * @param dateTime the Date_time dimension to be added to attributes array
+    * @param rs the result set
+    * @return the JSONArray containing the JSON objects that were converted from Result set
+    * @throws Exception
+    */
    public JSONArray convertRsToJSON(String product, String store, String dateTime, ResultSet rs) throws Exception {
 	   ArrayList<String> attr = new ArrayList<>();
 	   JSONArray jsonArray = new JSONArray();
@@ -48,6 +62,24 @@ public class BITool {
        attr.add(parseParam(store));
        attr.add(parseParam(dateTime));
        
+       ToJSON rsToJSON = new ToJSON();
+       jsonArray = rsToJSON.toJSONArray(rs, attr);
+       return jsonArray;
+   }
+   
+   /**
+    * Converts the result set from sql query to JSON object
+    * @param dimensions the array of strings to be added to attributes array
+    * @param rs the result set
+    * @return the JSONArray containing the JSON objects that were converted from Result set
+    * @throws Exception
+    */
+   public JSONArray convertRsToJSON(ArrayList<String> dimensions, ResultSet rs) throws Exception {
+	   ArrayList<String> attr = new ArrayList<>();
+	   JSONArray jsonArray = new JSONArray();
+	   for (int i = 0; i < dimensions.size(); i++) {
+		   attr.add(dimensions.get(i));
+	   }
        ToJSON rsToJSON = new ToJSON();
        jsonArray = rsToJSON.toJSONArray(rs, attr);
        return jsonArray;
@@ -175,10 +207,9 @@ public class BITool {
 	 * Returns the objects containing the data table for removing a dimension
 	 * @param dimensions the number of dimensions to be passed to create a broader central cube
 	 * @return The JSONArray containing the rows of data
-	 * @throws SQLException
-	 * @throws JSONException
+	 * @throws Exception 
 	 */
-	public JSONArray rollUpByDimension(ArrayList<String> dimensions) throws SQLException, JSONException
+	public JSONArray rollUpByDimension(ArrayList<String> dimensions) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -209,7 +240,7 @@ public class BITool {
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
-		     while(rs.next()){
+		    /* while(rs.next()){
 		    	 int total_rows = rs.getMetaData().getColumnCount();
 			    	JSONObject obj = new JSONObject();
 			    	for (int i = 0; i < total_rows; i++) {
@@ -217,7 +248,9 @@ public class BITool {
 			    				rs.getObject(i + 1));
 			    		jsonArray.put(obj);
 			    	}
-		     }
+		     }*/
+		     
+		     jsonArray = convertRsToJSON(dimensions, rs);
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
@@ -285,10 +318,9 @@ public class BITool {
 	 * Returns the objects containing the data table for adding a dimension
 	 * @param dimensions the number of dimensions used to represent a specific cube
 	 * @return The JSONArray containing the rows of data
-	 * @throws SQLException
-	 * @throws JSONException
+	 * @throws Exception 
 	 */
-	public JSONArray drillDownAddDimension(ArrayList<String> dimensions) throws SQLException, JSONException
+	public JSONArray drillDownAddDimension(ArrayList<String> dimensions) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -318,7 +350,7 @@ public class BITool {
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
-		     while(rs.next()){
+		     /*while(rs.next()){
 		    	 
 		    	 int total_rows = rs.getMetaData().getColumnCount();
 			    	JSONObject obj = new JSONObject();
@@ -327,7 +359,8 @@ public class BITool {
 			    				rs.getObject(i + 1));
 			    		jsonArray.put(obj);
 			    	}
-		     }
+		     }*/
+		     jsonArray = convertRsToJSON(dimensions, rs);
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
@@ -344,10 +377,9 @@ public class BITool {
 	 * @param dimensions the parameters used in select and group by statements to slice the cube
 	 * @param parameters the parameters used in the where clause to slice the cube
 	 * @return The JSONArray containing the rows of data
-	 * @throws SQLException
-	 * @throws JSONException
+	 * @throws Exception 
 	 */
-	public JSONArray slice(ArrayList<String> dimensions, ArrayList<String> parameters) throws SQLException, JSONException
+	public JSONArray slice(ArrayList<String> dimensions, ArrayList<String> parameters) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -385,7 +417,7 @@ public class BITool {
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
-		     while(rs.next()){
+		     /*while(rs.next()){
 		    	 
 		    	 int total_rows = rs.getMetaData().getColumnCount();
 			    	JSONObject obj = new JSONObject();
@@ -394,7 +426,8 @@ public class BITool {
 			    				rs.getObject(i + 1));
 			    		jsonArray.put(obj);
 			    	}
-		     }
+		     }*/
+		     jsonArray = convertRsToJSON(dimensions, rs);
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
@@ -413,10 +446,9 @@ public class BITool {
 	 * @param dimensions the parameters used in select and group by statements to dice the cube
 	 * @param parameters the parameters used in the where clause to dice the cube
 	 * @return The JSONArray containing the rows of data
-	 * @throws SQLException
-	 * @throws JSONException
+	 * @throws Exception 
 	 */
-	public JSONArray dice(ArrayList<String> dimensions, ArrayList<String> parameters) throws SQLException, JSONException
+	public JSONArray dice(ArrayList<String> dimensions, ArrayList<String> parameters) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -462,7 +494,7 @@ public class BITool {
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
-		     while(rs.next()){
+		    /* while(rs.next()){
 		    	 
 		    	 int total_rows = rs.getMetaData().getColumnCount();
 			    	JSONObject obj = new JSONObject();
@@ -471,7 +503,8 @@ public class BITool {
 			    				rs.getObject(i + 1));
 			    		jsonArray.put(obj);
 			    	}
-		     }
+		     }*/
+		     jsonArray = convertRsToJSON(dimensions, rs);
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
