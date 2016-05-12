@@ -10,7 +10,7 @@
   <tbody>
     <tr ng-repeat="d in data.data">      
       <td ng-repeat="key in d.key">{{key}}</td>
-      <td>{{d.value}}</td>
+      <td ng-repeat="val in d.value">{{val}}</td>
     </tr>
   </tbody>
 </table>

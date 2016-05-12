@@ -60,7 +60,7 @@
 					<div> 
 					  	<label>
 					  		<select class="c-select" ng-model="form.category.date_time">
-							  <option selected value="year">Year</option>
+							  <option value="year">Year</option>
 							  <option value="quarter">Quarter</option>
 							  <option value="month">Month</option>
 							  <option value="date">Date</option>
@@ -71,7 +71,7 @@
 					<div >
 					  	<label>
 					  		<select class="c-select" ng-model="form.category.store">
-							  <option selected value="store_zip">Zipcode</option>
+							  <option value="store_zip">Zipcode</option>
 							  <option value="store_state">State</option>
 							  <option value="store_county">County</option>
 							  <option value="city">City</option>
@@ -84,7 +84,7 @@
 					  	<label>
 					  		<select class="c-select" ng-model="form.category.product">
 					  		<!-- Product -->
-							  <option selected value="department">Department</option>
+							  <option value="department">Department</option>
 							  <option value="category">Category</option>
 							  <option value="sub_category">Sub Category</option>
 							  <option value="brand">Brand</option>
@@ -96,9 +96,9 @@
 
 				</div>
 				<!-- Cardinal Values -->
-				<div class="col-md-12">
+				<div class="col-md-12" ng-show="form.action == 'slide' || form.action == 'dice'">
 					<h3>Cardinal Values</h3>
-					<div class="alert alert-danger" role="alert" ng-show="dimensionError">
+					<div class="alert alert-danger" role="alert" ng-show="cardinalError">
 						<strong>Oh snap!</strong> Please select at least 1 cardinal value per attribute.
 					</div>
 					<div class="form-group col-md-4" ng-repeat="(attr, cardinalArr) in form.cardinals">

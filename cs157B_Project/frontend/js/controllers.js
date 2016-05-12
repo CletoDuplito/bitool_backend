@@ -12,7 +12,7 @@ appControllers.
 
 		$http.get(url, {params: parsedParam}).success(function(data){
 			$scope.data = data;
-			console.log(data);
+			// console.log(data);
 			// $scope.cardinals = formData.parseCardinalValues(data);
 			$scope.$emit("new_cardinals", formData.parseCardinalValues(data));
 			// console.log($scope.cardinals);
@@ -47,11 +47,8 @@ appControllers.
 
 		$scope.changeView = function(d) {
 			var parsedFormParams = formData.parseParam(d);
-			if(!parsedFormParams) {
-				$scope.cardinalError = true;
-				return;
-			}
-
+			$scope.cardinalError = parsedFormParams.cardinalError;
+			console.log(parsedFormParams);
 			//broadcast it to centrecubctrl
 			$scope.$broadcast("data_changed", parsedFormParams );
 		};

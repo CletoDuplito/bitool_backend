@@ -24,43 +24,53 @@ app.factory("FormData", function(){
 	 * Parse the dimension params
 	 */
 	var parseParam = function(d) {
-		//create query parameters
-		var attributes = {};
-		Object.keys(d.dimension).forEach(function(value) {
-			if(d.dimension[value]) { 				//check if dimension is selected
-				attributes[value] = [ value, d.category[value] ].join(".");		//parse attributes
-			}
-		});
+		//parsed params
+		var qParams = {
+			cardinalError: false
+		};
 
+		// get cardinals
 		var cardinals = {};
-		if(d.cardinals) {			//if there is a cardinal property
+		if(d.cardinals && (d["action"] == 'slide' || d["action"] == 'dice')) {			//if there is a cardinal property
 			Object.keys(d.cardinals).forEach(function(value,index, arr) { //parsing cardinal values
 				d.cardinals[value].forEach(function(cardinal,i,arr) {
 
 					if(!cardinals[value])
-						cardinals[value] = [];
+						cardinals[value] = [];		//init an array
 
 					if(arr[cardinal]) {			//cardinal value was selected
 						cardinals[value].push(cardinal.trim());
 					}
 				});
-				//combine attribute and cardinals
-				attributes[value] += cardinals[value].join("+");
 			});
 		}
 
-		console.log(attributes,cardinals);
+		//create query parameters
+		var dimensionQuery = [];
+		Object.keys(d.dimension).forEach(function(value) {
+			if(d.dimension[value]) { 				//check if dimension is selected
+				var attrName = d.category[value];
 
-		//combining cardinals and attributes
+				//find the cardinals based on dimension value
+				var cardinalString = "";
+				var query = "";
+				if(cardinals[attrName]) {
+					cardinalString = cardinals[attrName].join("+"); //combine attrs
+				}
 
-		//parsed params
-		var qParams = {
-			action: d.action,
-			// dimension: attributes.join(","),
-			dimension: "",
+				if(cardinalString === "" && (d["action"] == 'slide' || d["action"] == 'dice')) {						//no cardinal val found
+					query = [ value, attrName].join(".");
+					qParams["cardinalError"] = true;
+				} else 
+					query = [ value, attrName, cardinalString ].join(".");
 
-			// cardinals: cardinals.join('+')
-		}
+				dimensionQuery.push( query );		//parse attributes
+				
+			}
+		});
+
+		qParams["action"] = d.action;
+		qParams["dimension"] = dimensionQuery.join(",");
 
 		return qParams;
 	}
@@ -104,7 +114,6 @@ app.config(["$routeProvider", function($routeProvider) {
 		when('/', {
 			templateUrl: 'views/table-template.html',
 			controller: 'CentreCubeCtrl',
-//			controllerAs: "ctrl"
 		}).
 		otherwise({
 			redirectTo: "/"
