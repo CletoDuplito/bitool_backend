@@ -18,14 +18,16 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 @Path("/bi")
 public class RestfulOrdersJson {
-
+  
+    static BITool bi = new BITool();
 
     Hw3DAO dao = new Hw3DAO();
-
+    ArrayList<String> URLquery = new ArrayList<>();
     
     /**
      * VERSION 5.10.2016 @ 430pm
@@ -34,22 +36,266 @@ public class RestfulOrdersJson {
      *  
      * 
      * @return
+     * @throws Exception 
      */
     @Path("/parse1")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response inputURLquery(@QueryParam("action") String action, 
-                                   @QueryParam("dimension") List<String> dimension){
+  //public Response inputURLquery(@QueryParam("action") String action, 
+    public JSONArray inputURLquery(@QueryParam("action") String action, 
+                               
+                                  @QueryParam("dimension") String dimension) throws Exception{
        
       
-      String output = "Prameter1: " + action + "\nParameter2: " + dimension.toString();
+      ArrayList<String> input = new ArrayList<>();
+      Object result = null;
+      JSONArray jsonobj = null;
+      JSONObject data = null;
+      JSONObject dimobj = null;
+      JSONArray dimarr = null;
+      JSONArray attarr = null;
+      JSONObject attobj = null;
+      
+      String param1 = "", param2 = "", param3 = "";
+    
+      input = this.parseData(dimension);
+
+      String output = "";
+     
+      switch(action){
+        case "central_cube" :
+          
+          param1 = input.get(0);
+          param2 = input.get(1);
+          param3 = input.get(2);
+          
+          output = input.toString();
+          
+          
+          result = bi.centralCube(param1, param2, param3);
+          data.put("Data", result);
+          
+          param1 = parseParamFirst(param1);
+          param2 = parseParamFirst(param2);
+          param3 = parseParamFirst(param3);
+          
+          dimarr.put(param1);
+          dimarr.put(param2);
+          dimarr.put(param3);
+          
+          param1 = parseParamLast(param1);
+          param2 = parseParamLast(param2);
+          param3 = parseParamLast(param3);
+          
+          attarr.put(param1);
+          attarr.put(param2);
+          attarr.put(param3);
+          
+          
+          jsonobj.put(dimarr);
+          jsonobj.put(attarr);
+          jsonobj.put(result);
+          
+          
+          
+          break;
+        
+        case "roll_up_dimension" :
+          
+          param1 = input.get(0);
+          param2 = input.get(1);
+          param3 = input.get(2);
+          
+          ArrayList<String> rollUp = new ArrayList<String>();
+          rollUp.add(param1);
+          rollUp.add(param2);
+          rollUp.add(param3);
+          
+          output = input.toString();
+          
+          
+          result = bi.rollUpByDimension(rollUp);
+          
+          data.put("Data", result);
+          
+          param1 = parseParamFirst(param1);
+          param2 = parseParamFirst(param2);
+          param3 = parseParamFirst(param3);
+          
+          dimarr.put(param1);
+          dimarr.put(param2);
+          dimarr.put(param3);
+          
+          param1 = parseParamLast(param1);
+          param2 = parseParamLast(param2);
+          param3 = parseParamLast(param3);
+          
+          attarr.put(param1);
+          attarr.put(param2);
+          attarr.put(param3);
+          
+          
+          jsonobj.put(dimarr);
+          jsonobj.put(attarr);
+          jsonobj.put(result);
+          
+          //CALL Anacleto ROLL UP
+          //.(input)
+          
+          break;  
+          
+          
+        case "roll_up_hierarchy" :
+          
+          param1 = input.get(0);
+          param2 = input.get(1);
+          param3 = input.get(2);
+          
+          output = input.toString();
+          
+          
+          result = bi.rollUpByHierarchy(param1, param2, param3);
+          
+          data.put("Data", result);
+          
+          param1 = parseParamFirst(param1);
+          param2 = parseParamFirst(param2);
+          param3 = parseParamFirst(param3);
+          
+          dimarr.put(param1);
+          dimarr.put(param2);
+          dimarr.put(param3);
+          
+          param1 = parseParamLast(param1);
+          param2 = parseParamLast(param2);
+          param3 = parseParamLast(param3);
+          
+          attarr.put(param1);
+          attarr.put(param2);
+          attarr.put(param3);
+          
+          
+          jsonobj.put(dimarr);
+          jsonobj.put(attarr);
+          jsonobj.put(result);
+          //CALL Anacleto ROLL UP
+          //.(input)
+          
+          break;
+        
+          
+          
+        case "drill_down_dimension" :
+          
+          param1 = input.get(0);
+          param2 = input.get(1);
+          param3 = input.get(2);
+          
+          ArrayList<String> drillDown = new ArrayList<String>();
+          drillDown.add(param1);
+          drillDown.add(param2);
+          drillDown.add(param3);
+          
+          output = input.toString();
+          
+          
+          result = bi.drillDownAddDimension(drillDown);
+          
+          data.put("Data", result);
+          
+          param1 = parseParamFirst(param1);
+          param2 = parseParamFirst(param2);
+          param3 = parseParamFirst(param3);
+          
+          dimarr.put(param1);
+          dimarr.put(param2);
+          dimarr.put(param3);
+          
+          param1 = parseParamLast(param1);
+          param2 = parseParamLast(param2);
+          param3 = parseParamLast(param3);
+          
+          attarr.put(param1);
+          attarr.put(param2);
+          attarr.put(param3);
+          
+          
+          jsonobj.put(dimarr);
+          jsonobj.put(attarr);
+          jsonobj.put(result);
+          
+case "drill_down_hierarchy" :
+          
+          param1 = input.get(0);
+          param2 = input.get(1);
+          param3 = input.get(2);
+          
+          output = input.toString();
+          
+          
+          result = bi.drillDownByHierarchy(param1, param2, param3);
+          
+          data.put("Data", result);
+          
+          param1 = parseParamFirst(param1);
+          param2 = parseParamFirst(param2);
+          param3 = parseParamFirst(param3);
+          
+          dimarr.put(param1);
+          dimarr.put(param2);
+          dimarr.put(param3);
+          
+          param1 = parseParamLast(param1);
+          param2 = parseParamLast(param2);
+          param3 = parseParamLast(param3);
+          
+          attarr.put(param1);
+          attarr.put(param2);
+          attarr.put(param3);
+          
+          
+          jsonobj.put(dimarr);
+          jsonobj.put(attarr);
+          jsonobj.put(result);
+          //CALL Anacleto ROLL UP
+          //.(input)
+          
+          
+          //CALL Anacleto DRILL DOWN
+          break;
+        
+        case "slice" :
+          //CALL Anacleto SLICE
+          break;
+        
+        case "dice" :
+          //CALL Anacleto SLICE
+          break;
+     
+      }  
+      
+      
+    
+      input.clear();
+
+      
+
+      
+        //output = "Invalid Action";
+     
+      
+      //String output = "Parameter1: " + action + "\nParameter2: " + dimension.toString();
 
       /** still need to use parse method to parse data into strings **/
       
-      return Response.status(200).entity(output).build();
-    
+      
+      //return Response.status(200).entity(test.toString()).build();
+      
+      //return Response.status(200).entity(result.toString()).build();
+      return jsonobj;
       
     }
+    
    
     /**
      * VERSION 5.10.2016 @ 430pm
@@ -165,15 +411,56 @@ public class RestfulOrdersJson {
     }
     
     /**
-     * Parse input from Web
+     * 
+     * @param param
+     * @return
+     */
+    public String parseParamFirst(String param){
+      String[] text = null;
+      String st = "";
+      text = param.split("\\.");
+      
+      st = text[0];
+      
+      //System.out.println(st);
+      return st;
+    }
+    
+    /**
+     * 
+     * @param param
+     * @return
+     */
+    public String parseParamLast(String param){
+      String[] text = null;
+      String st = "";
+      text = param.split("\\.");
+      
+      st = text[1];
+      
+      //System.out.println(st);
+      return st;
+    }
+ 
+    
+    /**
+     * Parse URL query into an arraylist
      * @param element
      * @return
      */
-    public String[] parser(String element){
-      String[] data = element.split("\\.");
+    public ArrayList<String> parseData(String dimension){
+      String[] dataToParse = dimension.split(",");
+      ArrayList<String> dataParsed = new ArrayList<>();
+      int len = dataToParse.length;
       
+      for(int i = 0; i < len; i++){
+        
+        String x = dataToParse[i];
+        dataParsed.add(x);
+        
+      }
       
-      return data;
+      return dataParsed;
     }
 
     
