@@ -1,7 +1,5 @@
 var appControllers = angular.module("appControllers",[]);
 
-
-
 appControllers.
 	controller("CentreCubeCtrl",["$scope","$http","$routeParams","$timeout","FormData", function($scope,$http,$routeParams,$timeout,formData) {
 		// var url = "api/bi/parser";
@@ -39,6 +37,7 @@ appControllers.
 		$scope.form = formData.defaultFormValues;
 		$scope.disable = false;
 		$scope.dimensionError = false;
+		$scope.dimensionErrorDice = false;
 		$scope.cardinalError = false;
 
 		$scope.$on("new_cardinals", function(e, cardinals) {		//listen for cardinal values
@@ -53,21 +52,29 @@ appControllers.
 			$scope.$broadcast("data_changed", parsedFormParams );
 		};
 
-		$scope.dimensionCheck = function(dim) {
+		$scope.dimensionCheck = function(form) {
+			console.log(form);
+			var dim = form.dimension;
 			var keys = Object.keys(dim);
-			var count = 0;
+			var uncheckedDimension = 0;
 			$scope.disable = false;
 			$scope.dimensionError = false;
+			$scope.dimensionErrorDice = false;
 
 			for(var i = 0; i < keys.length; i++) {
 				var currentValue = dim[ keys[i] ];
 				if( currentValue == false ) {
-					count++;
+					uncheckedDimension++;
 				}
 			}
-			if(count >= 2) {
+
+			if(uncheckedDimension >= 2 && form["action"] == "dice") {		//unselected is more than or equal to 2
+				$scope.disable = true;
+				$scope.dimensionErrorDice = true;
+			} else if (uncheckedDimension > 2) {
 				$scope.disable = true;
 				$scope.dimensionError = true;
 			}
+
 		}
 	}]);

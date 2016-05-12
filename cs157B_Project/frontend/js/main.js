@@ -24,6 +24,8 @@ app.factory("FormData", function(){
 	 * Parse the dimension params
 	 */
 	var parseParam = function(d) {
+		var isSliceOrDice = (d["action"] == 'slice' || d["action"] == 'dice') ? true : false;
+
 		//parsed params
 		var qParams = {
 			cardinalError: false
@@ -31,7 +33,7 @@ app.factory("FormData", function(){
 
 		// get cardinals
 		var cardinals = {};
-		if(d.cardinals && (d["action"] == 'slide' || d["action"] == 'dice')) {			//if there is a cardinal property
+		if(d.cardinals && isSliceOrDice) {			//if there is a cardinal property
 			Object.keys(d.cardinals).forEach(function(value,index, arr) { //parsing cardinal values
 				d.cardinals[value].forEach(function(cardinal,i,arr) {
 
@@ -58,9 +60,10 @@ app.factory("FormData", function(){
 					cardinalString = cardinals[attrName].join("+"); //combine attrs
 				}
 
-				if(cardinalString === "" && (d["action"] == 'slide' || d["action"] == 'dice')) {						//no cardinal val found
-					query = [ value, attrName].join(".");
-					qParams["cardinalError"] = true;
+				if(cardinalString === "") {						//no cardinal val found
+					query = [ value, attrName ].join(".");
+					if(isSliceOrDice)
+						qParams["cardinalError"] = true;
 				} else 
 					query = [ value, attrName, cardinalString ].join(".");
 
@@ -98,7 +101,6 @@ app.factory("FormData", function(){
 				// console.log(result);
 			});
 		});
-		console.log(result);
 		return result;
 	}
 
