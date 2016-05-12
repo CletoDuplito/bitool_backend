@@ -29,6 +29,29 @@ public class BITool {
    static final String USER = "root";
    static final String PASS = "cs157b";
 
+   public String parseParam(String param){
+	    String[] text = null;
+	    String st = "";
+	    text = param.split("\\.");
+	    
+	    st = text[1];
+	    
+	    System.out.println(st);
+	    return st;
+	  }
+   
+   
+   public JSONArray convertRsToJSON(String product, String store, String dateTime, ResultSet rs) throws Exception {
+	   ArrayList<String> attr = new ArrayList<>();
+	   JSONArray jsonArray = new JSONArray();
+       attr.add(parseParam(product));
+       attr.add(parseParam(store));
+       attr.add(parseParam(dateTime));
+       
+       ToJSON rsToJSON = new ToJSON();
+       jsonArray = rsToJSON.toJSONArray(rs, attr);
+       return jsonArray;
+   }
    
    /**
     * Returns the objects containing the data table for central cube.
@@ -36,10 +59,9 @@ public class BITool {
     * @param store the Store's dimension
     * @param dateTime the Date_time's dimension
     * @return The JSONArray containing the rows of data
-    * @throws SQLException
-    * @throws JSONException
+    * @throws Exception 
     */
-	public JSONArray centralCube(String product, String store, int dateTime) throws SQLException, JSONException
+	public JSONArray centralCube(String product, String store, String dateTime) throws Exception
 	{
    		Connection conn = null;
    		PreparedStatement statement = null;
@@ -59,12 +81,12 @@ public class BITool {
 		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
 			   		"GROUP BY " + product +", " + store +", " + dateTime;
 		   	 statement = conn.prepareStatement(sql);
-		     statement.setString(1,  product);
+		     /*statement.setString(1,  product);
 		     statement.setString(2, store);
-		     statement.setInt(3, dateTime);
+		     statement.setString(3, dateTime);*/
 		     rs = statement.executeQuery(sql);
 		     
-		     //Extract data from result set
+		    /* //Extract data from result set
 		     while(rs.next()){
 		    	int total_rows = rs.getMetaData().getColumnCount();
 		    	JSONObject obj = new JSONObject();
@@ -73,7 +95,17 @@ public class BITool {
 		    				rs.getObject(i + 1));
 		    		jsonArray.put(obj);
 		    	}
-		     }
+		    	}*/
+		     /*ArrayList<String> attr = new ArrayList<>();
+	         attr.add(parseParam(product));
+	         attr.add(parseParam(store));
+	         attr.add(parseParam(dateTime));
+	         
+	         ToJSON rsToJSON = new ToJSON();
+
+	         jsonArray = rsToJSON.toJSONArray(rs, attr);*/
+	         jsonArray = convertRsToJSON(product, store, dateTime, rs);
+		     
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
@@ -91,10 +123,9 @@ public class BITool {
    	 * @param store the Store's Dimension
    	 * @param dateTime the Date_time dimension
    	 * @return The JSONArray containing the rows of data
-   	 * @throws SQLException
-   	 * @throws JSONException
+   	 * @throws Exception 
    	 */
-	public JSONArray rollUpByHierarchy(String product, String store, int dateTime) throws SQLException, JSONException
+	public JSONArray rollUpByHierarchy(String product, String store, String dateTime) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -117,7 +148,7 @@ public class BITool {
 		    rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
-		     while(rs.next()){
+		  /*   while(rs.next()){
 		    	 int total_rows = rs.getMetaData().getColumnCount();
 			    	JSONObject obj = new JSONObject();
 			    	for (int i = 0; i < total_rows; i++) {
@@ -125,7 +156,10 @@ public class BITool {
 			    				rs.getObject(i + 1));
 			    		jsonArray.put(obj);
 			    	}
-		     }
+		     }*/
+		     
+		     jsonArray = convertRsToJSON(product, store, dateTime, rs);
+		     
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
@@ -201,10 +235,9 @@ public class BITool {
     * @param store the Store's Dimension
     * @param dateTime the Date_time's Dimension
     * @return The JSONArray containing the rows of data
-    * @throws SQLException
-    * @throws JSONException
+    * @throws Exception 
     */
-	public JSONArray drillDownByHierarchy(String product, String store, int dateTime) throws SQLException, JSONException
+	public JSONArray drillDownByHierarchy(String product, String store, String dateTime) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -227,7 +260,7 @@ public class BITool {
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
-		     while(rs.next()){
+		    /* while(rs.next()){
 		    	 int total_rows = rs.getMetaData().getColumnCount();
 			    	JSONObject obj = new JSONObject();
 			    	for (int i = 0; i < total_rows; i++) {
@@ -235,7 +268,8 @@ public class BITool {
 			    				rs.getObject(i + 1));
 			    		jsonArray.put(obj);
 			    	}
-		     }
+		     }*/
+		     jsonArray = convertRsToJSON(product, store, dateTime, rs);
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
@@ -451,7 +485,7 @@ public class BITool {
    	
    	
 	
-   public static void main(String[] args) {
+  /* public static void main(String[] args) {
 	   Connection conn = null;
 	   Statement stmt = null;
 	   try{
@@ -490,6 +524,12 @@ public class BITool {
 		         se.printStackTrace();
 		      }//end finally try
 	   }//end try
+	   
+	   
+	   
 	   System.out.println("Closing");
    }//end main
+*/   
+   
+   
 } // end class
