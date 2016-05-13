@@ -420,6 +420,7 @@ public class BITool {
 		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key AND " +
 		    		where_clause +
 		    		" GROUP BY " + select_statement;
+		     
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
@@ -470,37 +471,16 @@ public class BITool {
    			//Execute a query that dices the cube
    			System.out.println("Creating statement...");
 		   	String sql;
-		   	String select_statement = "";
-		   	 for (int i = 0; i < dimensions.size(); i++) {
-		   		 if (i == 0) select_statement = "" + dimensions.get(i);
-		   		 else {
-		   			select_statement = select_statement + ", " + dimensions.get(i);
-		   		 }
-		   	 }
-		   	 String where_clause = "";
-		   	 for (int i = 0; i < parameters.size(); i++) {
-		   		 String parameter = parameters.get(i);
-		   		 String lastParameter = parameters.get(i - 1);
-		   		 if (i == 0) {
-		   			 where_clause = "" + parameter;
-		   		 }
-		   		 else {
-		   			/*if (parameter.charAt(lastParameter.length() - 1) == ')') {
-		   				 where_clause = where_clause + " AND " + parameter;
-		   			}
-		   			else {
-		   				where_clause = where_clause + " " + parameter;
-		   			}*/
-		   			where_clause = where_clause + " AND " + parameter;
-		   		 }
-		   	 }
-		     sql = "SELECT " + select_statement + ", sum(sales.dollar_sales) AS sales_total " +
+		   	String select_statement = String.join(", ", dimensions);
+		   	String where_clause = String.join(" AND ", parameters);
+		   	
+		    sql = "SELECT " + select_statement + ", sum(sales.dollar_sales) AS sales_total " +
 		    		"FROM Product, Store, Date_time, Sales " +
 		    		"WHERE Sales.product_key = Product.product_key AND " +
 		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key AND " +
 		    		where_clause +
 		    		" GROUP BY " + select_statement;
-		   	 
+//		   	System.out.println(sql);
 		    /* sql = "SELECT Product.category, Store.store_state, Date_time.year, sum(sales.dollar_sales) AS sales_total " +
 		    		"FROM Product, Store, Date_time, Sales " +
 		    		"WHERE Sales.product_key = Product.product_key AND " +

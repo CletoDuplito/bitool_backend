@@ -1,5 +1,6 @@
 package bitool;
 
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -288,29 +289,49 @@ public class RestfulOrdersJson {
           ArrayList<String> dim = new ArrayList<String>();
           ArrayList<String> val = new ArrayList<String>();
           ArrayList<String> temp = new ArrayList<String>();
+          ArrayList<String> param = new ArrayList<String>();
+          ArrayList<String> attparam = new ArrayList<String>();
           
           int lenOfinput = input.size();
           
-          
         
-          param1 = input.get(0);
+        
+          //param1 = input.get(0);
          // param2 = input.get(1);
         //  param3 = input.get(2);
           
-          attparam1 = input.get(0);
+          //attparam1 = input.get(0);
        //   attparam2 = input.get(1);
        //   attparam3 = input.get(2);
           
           //if(param1.contains("+")){
-//          for(int i = 0; i < lenOfinput){
-//            
-//          }
+
+          for(int i = 0; i < lenOfinput; i++){
+            String[] x = new String[0];
+            x = input.get(i).split("\\.");
+            int num = x.length;
+            //x = new String[0];
+           
+            if(num < 3){
+              dim.add(input.get(i));
+              param.add(input.get(i));
+              
+              
+            }else{
+              
+              temp = sliceParse(input.get(i));
+              dim.add(temp.get(0));
+              val.add(temp.get(1));
+              attparam.add(dim.get(0));            
+              //System.out.println(" HELPE " + dim.get(0));
+            //param.add(input.get(i));
+            //attparam.add(input.get(i));
+            }
+            
+          }
           
-          temp = sliceParse(dimension);
-          dim.add(temp.get(0));
-          val.add(temp.get(1));
+          
              
-              System.out.println(temp.toString());
           //}else{
               //dim.add(param1);
           //}
@@ -333,30 +354,40 @@ public class RestfulOrdersJson {
           
           result = bi.slice(dim, val);
           
+          int pl = param.size();
+          int al = attparam.size();
+          
+          for(int i = 0; i < pl; i++){
+            String x = param.get(i);
+            param.set(i, parseParamFirst(x));
+          }
+          
+          for(int i = 0; i < al; i++){
+            String x = attparam.get(i);
+            attparam.set(i, parseParamLast(x));
+          }
+          
+          
+          
           param1 = parseParamFirst(param1);
           //param2 = parseParamFirst(param2);
           //param3 = parseParamFirst(param3);
+          for(int i = 0; i < pl; i++){
+            dimarr.put(param.get(i));
+            
+            
+          }
           
-          dimarr.put(param1);
-          //dimarr.put(param2);
-          //dimarr.put(param3);
+          for(int i = 0; i < al; i++){
+           attarr.put(attparam.get(i));
           
-          
-          attparam1 = parseParamLast(attparam1);
-          attarr.put(attparam1);
-          //attparam2 = parseParamLast(attparam2);
-          //attparam3 = parseParamLast(attparam3);
-          
-          dimarr.put(attparam1);
-          //attarr.put(attparam2);
-          //attarr.put(attparam3);
+            
+          }
      
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);
           dimobj.put("data", result);
 
-          
-          
           //CALL Anacleto SLICE
           break;
         
@@ -366,22 +397,53 @@ public class RestfulOrdersJson {
           ArrayList<String> attrDice = new ArrayList<String>();
           ArrayList<String> cardinalDice = new ArrayList<String>();
           
+          ArrayList<String> dimAttrPairDice = new ArrayList<String>();
+          ArrayList<String> dimAttrCardinalDice = new ArrayList<String>();
           
           //getting dimensions
           for(int i = 0; i < input.size(); i++) {
-        	  String param = input.get(i);
-        	  String[] parsedParam = param.split("\\.");
-        	  dimDice.add(parsedParam[0]);		//store dim key
-        	  attrDice.add(parsedParam[1]);		//store attr
-        	  cardinalDice.add(parsedParam[2]);
+        	  String paramDim = input.get(i);
+        	  String[] parsedParam = paramDim.split("\\.");
+        	  dimDice.add(parsedParam[0]);	 	 //store dim key
+        	  attrDice.add(parsedParam[1]);		 //store attr
+        	  cardinalDice.add(parsedParam[2]);  //store cardinal
         	  
-        	  System.out.println("This is the dice dimenstion: " + dimDice);
-        	  System.out.println("This is the dice attribute: " + attrDice);
-        	  System.out.println("This is the dice cardinal: " + cardinalDice);
+        	  dimAttrPairDice.add(parsedParam[0] + "." + parsedParam[1]);		//create dim attr pair
+        	  
+        	  if(parsedParam[2].split("\\+").length > 1) { 						//handling more than 1 cardinal value case
+        		  
+        		  String[] cardinalParams = parsedParam[2].split("\\+");		//split the cardinals
+        		  ArrayList<String> tempCardinals = new ArrayList<String>();
+        		  
+        		  for(int x = 0; x < cardinalParams.length; x++) {
+        			  tempCardinals.add(parsedParam[0] + "." + parsedParam[1] + " = '" + cardinalParams[x] + "'");	//add the cardinal to its parent attribute
+        		  }
+        		  
+        		  dimAttrCardinalDice.add("(" + String.join(" OR ", tempCardinals) + ")");							//join the cardinals into a formatted string
+        		  
+        		  System.out.println("This is the dice cardinal has more than 1 value: ");
+        		  
+        	  } else {
+        		  dimAttrCardinalDice.add("(" + parsedParam[0] + "." + parsedParam[1] + " = '" + parsedParam[2] + "')") ; //add the cardinal into a formatted string
+        	  }
+        	  
+        	  
+
           }
+//    	  System.out.println("This is the dice dimenstion: " + dimDice);
+//    	  System.out.println("This is the dice attribute: " + attrDice);
+//    	  System.out.println("This is the dice cardinal: " + cardinalDice);
+          System.out.println("This is the dice dimAttrPairDice: " + dimAttrPairDice);
+    	  System.out.println("This is the dice dimAttrCardinalDice: " + dimAttrCardinalDice );
+          
+          result = bi.dice(dimAttrPairDice, dimAttrCardinalDice);
+          
+          dimobj.put("dimension", dimDice);
+          dimobj.put("attributes", attrDice);
+          dimobj.put("data", result);
+    	  System.out.println("Result is: " + result.toString() );
           
           break;
-          
       }   
        
       input.clear();
