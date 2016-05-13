@@ -68,42 +68,87 @@ public class RestfulOrdersJson {
      
       switch(action){
         case "central_cube" :
-          
-          param1 = input.get(0);
-          param2 = input.get(1);
-          param3 = input.get(2);
-          attparam1 = input.get(0);
-          attparam2 = input.get(1);  
-          attparam3 = input.get(2);
-          
-          //output = input.toString();
-          
-          
-          result = bi.centralCube(param1, param2, param3);
-          //System.out.println(result.toString());
-         // data.put("data", result);
-          
-          
-          param1 = parseParamFirst(param1);
-          param2 = parseParamFirst(param2);
-          param3 = parseParamFirst(param3);
-          
-          dimarr.put(param1);
-          dimarr.put(param2);
-          dimarr.put(param3);
-          
-          
-          
-          
-          
-          
-          attparam1 = parseParamLast(attparam1);
-          attparam2 = parseParamLast(attparam2);
-          attparam3 = parseParamLast(attparam3);
-          
-          attarr.put(attparam1);
-          attarr.put(attparam2);
-          attarr.put(attparam3);
+          if (input.size() == 3) {
+        	  param1 = input.get(0);
+              param2 = input.get(1);
+              param3 = input.get(2);
+              attparam1 = input.get(0);
+              attparam2 = input.get(1);  
+              attparam3 = input.get(2);
+              
+              //output = input.toString();
+              
+              
+              result = bi.centralCube(param1, param2, param3);
+              //System.out.println(result.toString());
+             // data.put("data", result);
+              
+              
+              param1 = parseParamFirst(param1);
+              param2 = parseParamFirst(param2);
+              param3 = parseParamFirst(param3);
+              
+              dimarr.put(param1);
+              dimarr.put(param2);
+              dimarr.put(param3);
+
+              
+              attparam1 = parseParamLast(attparam1);
+              attparam2 = parseParamLast(attparam2);
+              attparam3 = parseParamLast(attparam3);
+              
+              attarr.put(attparam1);
+              attarr.put(attparam2);
+              attarr.put(attparam3);
+          }
+          else if (input.size() == 2) {
+        	  param1 = input.get(0);
+              param2 = input.get(1);
+              attparam1 = input.get(0);
+              attparam2 = input.get(1);  
+              
+              //output = input.toString();
+              
+              
+              result = bi.centralCube(param1, param2);
+              //System.out.println(result.toString());
+             // data.put("data", result);
+              
+              
+              param1 = parseParamFirst(param1);
+              param2 = parseParamFirst(param2);
+              
+              dimarr.put(param1);
+              dimarr.put(param2);
+
+              
+              attparam1 = parseParamLast(attparam1);
+              attparam2 = parseParamLast(attparam2);
+              
+              attarr.put(attparam1);
+              attarr.put(attparam2);
+          }
+          else {
+	          param1 = input.get(0);
+	          attparam1 = input.get(0);
+	          
+	          //output = input.toString();
+	          
+	          
+	          result = bi.centralCube(param1);
+	          //System.out.println(result.toString());
+	         // data.put("data", result);
+	          
+	          
+	          param1 = parseParamFirst(param1);
+	          
+	          dimarr.put(param1);
+	
+	          
+	          attparam1 = parseParamLast(attparam1);
+	          
+	          attarr.put(attparam1);
+          }
      
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);
@@ -115,42 +160,91 @@ public class RestfulOrdersJson {
           break;
         
         case "roll_up_dimension" :
-          
-          param1 = input.get(0);
-          param2 = input.get(1);
-          param3 = input.get(2);
-          
-          attparam1 = input.get(0);
-          attparam2 = input.get(1);
-          attparam3 = input.get(2);
-          
-          ArrayList<String> rollUp = new ArrayList<String>();
-          rollUp.add(param1);
-          rollUp.add(param2);
-          rollUp.add(param3);
-          
-          output = input.toString();
-          
-          
-          result = bi.rollUpByDimension(rollUp);
-          
-          
-          param1 = parseParamFirst(param1);
-          param2 = parseParamFirst(param2);
-          param3 = parseParamFirst(param3);
-          
-          dimarr.put(param1);
-          dimarr.put(param2);
-          dimarr.put(param3);
+          if (input.size() == 2) { //when choosing two dimensions only
+        	  param1 = input.get(0);
+              param2 = input.get(1);
+              
+              attparam1 = input.get(0);
+              attparam2 = input.get(1);
+              
+              ArrayList<String> rollUp = new ArrayList<String>();
+              rollUp.add(param1);
+              rollUp.add(param2);
+              
+              output = input.toString();
+              
+              result = bi.rollUpByDimension(rollUp);
+              
+              param1 = parseParamFirst(param1);
+              param2 = parseParamFirst(param2);
+              
+              dimarr.put(param1);
+              dimarr.put(param2);
 
-          
-          attparam1 = parseParamLast(attparam1);
-          attparam2 = parseParamLast(attparam2);
-          attparam3 = parseParamLast(attparam3);
-          
-          attarr.put(attparam1);
-          attarr.put(attparam2);
-          attarr.put(attparam3);
+              
+              attparam1 = parseParamLast(attparam1);
+              attparam2 = parseParamLast(attparam2);
+              
+              attarr.put(attparam1);
+              attarr.put(attparam2);
+          }
+          else if (input.size() == 1) { // when choosing one dimension only
+        	  param1 = input.get(0);
+              
+              attparam1 = input.get(0);
+              
+              ArrayList<String> rollUp = new ArrayList<String>();
+              rollUp.add(param1);
+              
+              output = input.toString();
+              
+              result = bi.rollUpByDimension(rollUp);
+              
+              param1 = parseParamFirst(param1);
+              
+              dimarr.put(param1);
+              
+              attparam1 = parseParamLast(attparam1);
+              
+              attarr.put(attparam1);
+          }
+          else {
+	          param1 = input.get(0);
+	          param2 = input.get(1);
+	          param3 = input.get(2);
+	          
+	          attparam1 = input.get(0);
+	          attparam2 = input.get(1);
+	          attparam3 = input.get(2);
+	          
+	          ArrayList<String> rollUp = new ArrayList<String>();
+	          rollUp.add(param1);
+	          rollUp.add(param2);
+	          rollUp.add(param3);
+	          
+	          output = input.toString();
+	          
+	          
+	          result = bi.rollUpByDimension(rollUp);
+	          
+	          
+	          param1 = parseParamFirst(param1);
+	          param2 = parseParamFirst(param2);
+	          param3 = parseParamFirst(param3);
+	          
+	          dimarr.put(param1);
+	          dimarr.put(param2);
+	          dimarr.put(param3);
+	
+	          
+	          attparam1 = parseParamLast(attparam1);
+	          attparam2 = parseParamLast(attparam2);
+	          attparam3 = parseParamLast(attparam3);
+	          
+	          attarr.put(attparam1);
+	          attarr.put(attparam2);
+	          attarr.put(attparam3);
+          }
      
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);
@@ -205,45 +299,100 @@ public class RestfulOrdersJson {
           
         case "drill_down_dimension" :
           
-          param1 = input.get(0);
-          param2 = input.get(1);
-          param3 = input.get(2);
-          attparam1 = input.get(0);
-          attparam2 = input.get(1);
-          attparam3 = input.get(2);
+        	if (input.size() == 2) { //when choosing two dimensions only
+          	  param1 = input.get(0);
+                param2 = input.get(1);
+                
+                attparam1 = input.get(0);
+                attparam2 = input.get(1);
+                
+                ArrayList<String> drillDown = new ArrayList<String>();
+                drillDown.add(param1);
+                drillDown.add(param2);
+                
+                output = input.toString();
+                
+                result = bi.drillDownAddDimension(drillDown);
+                
+                param1 = parseParamFirst(param1);
+                param2 = parseParamFirst(param2);
+                
+                dimarr.put(param1);
+                dimarr.put(param2);
+
+                
+                attparam1 = parseParamLast(attparam1);
+                attparam2 = parseParamLast(attparam2);
+                
+                attarr.put(attparam1);
+                attarr.put(attparam2);
+            }
+            else if (input.size() == 1) { // when choosing one dimension only
+          	  param1 = input.get(0);
+                
+                attparam1 = input.get(0);
+                
+                ArrayList<String> drillDown = new ArrayList<String>();
+                drillDown.add(param1);
+                
+                output = input.toString();
+                
+                result = bi.drillDownAddDimension(drillDown);
+                
+                param1 = parseParamFirst(param1);
+                
+                dimarr.put(param1);
+                
+                attparam1 = parseParamLast(attparam1);
+                
+                attarr.put(attparam1);
+            }
+            else {
+  	          param1 = input.get(0);
+  	          param2 = input.get(1);
+  	          param3 = input.get(2);
+  	          
+  	          attparam1 = input.get(0);
+  	          attparam2 = input.get(1);
+  	          attparam3 = input.get(2);
+  	          
+  	          
+	  	        ArrayList<String> drillDown = new ArrayList<String>();
+	            drillDown.add(param1);
+	            drillDown.add(param2);
+	            drillDown.add(param3);
+	            output = input.toString();
+	            
+	            result = bi.drillDownAddDimension(drillDown);
+  	          
+  	          
+  	          param1 = parseParamFirst(param1);
+  	          param2 = parseParamFirst(param2);
+  	          param3 = parseParamFirst(param3);
+  	          
+  	          dimarr.put(param1);
+  	          dimarr.put(param2);
+  	          dimarr.put(param3);
+  	
+  	          
+  	          attparam1 = parseParamLast(attparam1);
+  	          attparam2 = parseParamLast(attparam2);
+  	          attparam3 = parseParamLast(attparam3);
+  	          
+  	          attarr.put(attparam1);
+  	          attarr.put(attparam2);
+  	          attarr.put(attparam3);
+            }
           
-          ArrayList<String> drillDown = new ArrayList<String>();
-          drillDown.add(param1);
-          drillDown.add(param2);
-          drillDown.add(param3);
           
-          output = input.toString();
-          
-          
-          result = bi.drillDownAddDimension(drillDown);
-          
-          param1 = parseParamFirst(param1);
-          param2 = parseParamFirst(param2);
-          param3 = parseParamFirst(param3);
-          
-          dimarr.put(param1);
-          dimarr.put(param2);
-          dimarr.put(param3);
-          
-          
-          attparam1 = parseParamLast(attparam1);
-          attparam2 = parseParamLast(attparam2);
-          attparam3 = parseParamLast(attparam3);
-          
-          attarr.put(attparam1);
-          attarr.put(attparam2);
-          attarr.put(attparam3);
      
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);
           dimobj.put("data", result);
+          break;
           
-case "drill_down_hierarchy" :
+          
+        case "drill_down_hierarchy" :
           
           param1 = input.get(0);
           param2 = input.get(1);
@@ -276,142 +425,140 @@ case "drill_down_hierarchy" :
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);
           dimobj.put("data", result);
-
-
-          //CALL Anacleto ROLL UP
-          //.(input)
           
           
           //CALL Anacleto DRILL DOWN
           break;
-        
+     
+          
+          
         case "slice" :
-          System.out.println("This is the dimenstion: " + input);
-          ArrayList<String> dim = new ArrayList<String>();
-          ArrayList<String> val = new ArrayList<String>();
-          ArrayList<String> temp = new ArrayList<String>();
-          ArrayList<String> param = new ArrayList<String>();
-          ArrayList<String> attparam = new ArrayList<String>();
+            System.out.println("This is the dimension: " + input);
+            ArrayList<String> dim = new ArrayList<String>();
+            ArrayList<String> val = new ArrayList<String>();
+            ArrayList<String> temp = new ArrayList<String>();
+            ArrayList<String> param = new ArrayList<String>();
+            ArrayList<String> attparam = new ArrayList<String>();
+            
+            int lenOfinput = input.size();
+            System.out.println("This is the input: " + input);
           
-          int lenOfinput = input.size();
           
-        
-        
-          //param1 = input.get(0);
-         // param2 = input.get(1);
-        //  param3 = input.get(2);
-          
-          //attparam1 = input.get(0);
-       //   attparam2 = input.get(1);
-       //   attparam3 = input.get(2);
-          
-          //if(param1.contains("+")){
-          for(int i = 0; i < lenOfinput; i++){
-            String[] x = new String[0];
-            x = input.get(i).split("\\.");
-            int num = x.length;
-            //x = new String[0];
-           
-            if(num < 3){
-              dim.add(input.get(i));
-              param.add(input.get(i));
+            //param1 = input.get(0);
+           // param2 = input.get(1);
+          //  param3 = input.get(2);
+            
+            //attparam1 = input.get(0);
+         //   attparam2 = input.get(1);
+         //   attparam3 = input.get(2);
+            
+            //if(param1.contains("+")){
+            for(int i = 0; i < lenOfinput; i++){
+              String[] x = new String[0];
+              x = input.get(i).split("\\.");
+              int num = x.length;
+              //x = new String[0];
+             
+              if(num < 3){
+                dim.add(input.get(i));
+                param.add(input.get(i));
+                System.out.println("im in num < 3, in slice method: " + num);
+                
+              }else{
+                System.out.println("Im in num > 3, in slice method: " + num);
+                temp = sliceParse(input.get(i));
+                dim.add(temp.get(0));
+                val.add(temp.get(1));
+                attparam.add(dim.get(0));            
+                //System.out.println(" HELP " + dim.get(0));
+              //param.add(input.get(i));
+              //attparam.add(input.get(i));
+              }
               
-              
-            }else{
-              
-              temp = sliceParse(input.get(i));
-              dim.add(temp.get(0));
-              val.add(temp.get(1));
-              attparam.add(dim.get(0));            
-              //System.out.println(" HELPE " + dim.get(0));
-            //param.add(input.get(i));
-            //attparam.add(input.get(i));
             }
             
-          }
-          
-          
-             
-          //}else{
-              //dim.add(param1);
-          //}
-          /*
-          if(param1.contains("+")){
-              temp = sliceParse(param2);
-              dim.add(temp.get(0));
-              val.add(temp.get(1));
-          }else{
-              dim.add(param2);
-          }
-          if(param1.contains("+")){
-              temp = sliceParse(param3);
-              dim.add(temp.get(0));
-              val.add(temp.get(1));
-          }else{
-              dim.add(param3);
-          }
-          */
-          
-          result = bi.slice(dim, val);
-          
-          int pl = param.size();
-          int al = attparam.size();
-          
-          for(int i = 0; i < pl; i++){
-            String x = param.get(i);
             
-            param.set(i, parseParamFirst(x));
+               
+            //}else{
+                //dim.add(param1);
+            //}
+            /*
+            if(param1.contains("+")){
+                temp = sliceParse(param2);
+                dim.add(temp.get(0));
+                val.add(temp.get(1));
+            }else{
+                dim.add(param2);
+            }
+            if(param1.contains("+")){
+                temp = sliceParse(param3);
+                dim.add(temp.get(0));
+                val.add(temp.get(1));
+            }else{
+                dim.add(param3);
+            }
+            */
             
+            result = bi.slice(dim, val);
             
-          }
-          
-          for(int i = 0; i < al; i++){
-            String x = attparam.get(i);
+            int pl = param.size();
+            int al = attparam.size();
             
-            attparam.set(i, parseParamLast(x));
+            for(int i = 0; i < pl; i++){
+              String x = param.get(i);
+              
+              param.set(i, parseParamFirst(x));
+              
+              
+            }
             
-            
-          }
-          
-          
-          
-          param1 = parseParamFirst(param1);
-          //param2 = parseParamFirst(param2);
-          //param3 = parseParamFirst(param3);
-          for(int i = 0; i < pl; i++){
-            dimarr.put(param.get(i));
+            for(int i = 0; i < al; i++){
+              String x = attparam.get(i);
+              
+              attparam.set(i, parseParamLast(x));
+              
+              
+            }
             
             
-          }
-          
-          for(int i = 0; i < al; i++){
-           attarr.put(attparam.get(i));
-          
             
-          }
-          
-         // dimarr.put(param);
-          //dimarr.put(param2);
-          //dimarr.put(param3);
-          
-          
-         // attparam1 = parseParamLast(attparam1);
-         // attarr.put(attparam1);
-          //attparam2 = parseParamLast(attparam2);
-          //attparam3 = parseParamLast(attparam3);
-          
-          //dimarr.put(attparam);
-       //   attarr.put(attparam2);
-        //  attarr.put(attparam3);
-     
-          dimobj.put("dimension", dimarr);
-          dimobj.put("attributes", attarr);
-          dimobj.put("data", result);
+            param1 = parseParamFirst(param1);
+            //param2 = parseParamFirst(param2);
+            //param3 = parseParamFirst(param3);
+            for(int i = 0; i < pl; i++){
+              dimarr.put(param.get(i));
+              
+              
+            }
+            
+            for(int i = 0; i < al; i++){
+             attarr.put(attparam.get(i));
+            
+              
+            }
+            
+           // dimarr.put(param);
+            //dimarr.put(param2);
+            //dimarr.put(param3);
+            
+            
+           // attparam1 = parseParamLast(attparam1);
+           // attarr.put(attparam1);
+            //attparam2 = parseParamLast(attparam2);
+            //attparam3 = parseParamLast(attparam3);
+            
+            //dimarr.put(attparam);
+         //   attarr.put(attparam2);
+          //  attarr.put(attparam3);
+       
+            dimobj.put("dimension", dimarr);
+            dimobj.put("attributes", attarr);
+            dimobj.put("data", result);
 
-          
-          
-          //CALL Anacleto SLICE
-          break;
+            
+            
+            //CALL Anacleto SLICE
+            break;
         
         case "dice" :
           //CALL Anacleto SLICE
@@ -453,52 +600,53 @@ case "drill_down_hierarchy" :
     
     
     public ArrayList<String> sliceParse(String input){
-      System.out.println("SliceParser" + input);
-      ArrayList<String> sliceResult = new ArrayList<>();
-      int countOfPlus = 0;
-      String combine = "";
-      String[] splitDim = input.split("\\.");
-      String dim = splitDim[0] +"." + splitDim[1];
-      
-      sliceResult.add(dim);
-
-      String clause = splitDim[2];
-      int num = 0;
-      
-      String[] plus = clause.split("\\+");
-      num =  plus.length;
-      
-/*      while(num == 1){
-        countOfPlus++;
-        System.out.println("i am counting" + countOfPlus);
+        System.out.println("SliceParser" + input);
+        ArrayList<String> sliceResult = new ArrayList<>();
+        int countOfPlus = 0;
+        String combine = "";
+        String[] splitDim = input.split("\\.");
+        String dim = splitDim[0] +"." + splitDim[1];
         
-      }*/
-      
-      //System.out.println(num);
-      System.out.println(plus[0]);
-      
-      
-      if(num == 1){
-         combine = "'"+ plus[0] +"'";
-         System.out.println(combine);
-      }else{
-      
-        //String[] values = clause.split("\\+");
-        //countOfPlus =  plus.length;
-      combine = "'"+ plus[0] +"'";
-      
-      
-        for(int i = 1; i < num; i++){
-          combine = combine + " OR " + "'" + plus[i] +"'";
+        sliceResult.add(dim);
+
+        String clause = splitDim[2];
+        int num = 0;
+        
+        String[] plus = clause.split("\\+");
+        num =  plus.length;
+        System.out.println("num: " + num);
+  /*      while(num == 1){
+          countOfPlus++;
+          System.out.println("i am counting" + countOfPlus);
           
+        }*/
+        
+        //System.out.println(num);
+        System.out.println(plus[0]);
+        
+        
+        if(num == 1){
+           combine = "'"+ plus[0] +"'";
+           System.out.println("combine: " + combine);
+        }else{
+        
+          //String[] values = clause.split("\\+");
+          //countOfPlus =  plus.length;
+        combine = "'"+ plus[0] +"'";
+        
+        
+          for(int i = 1; i < num; i++){
+            combine = combine + " OR " + dim + " = '" + plus[i] +"'";
+            
+          }
+          System.out.println("combine result: " + combine);
         }
+        combine = '(' + dim + " = " + " " + combine + ')';
+        
+        sliceResult.add(combine);
+        System.out.println("this is slice: " + sliceResult);
+        return sliceResult;
       }
-      combine = dim + " = " + " " + combine;
-      
-      sliceResult.add(combine);
-      System.out.println("this ist slice: " + sliceResult);
-      return sliceResult;
-    }
     
     
     /**
