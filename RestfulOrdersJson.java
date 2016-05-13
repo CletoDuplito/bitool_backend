@@ -254,36 +254,39 @@ public class RestfulOrdersJson {
           
         case "roll_up_hierarchy" :
 
-          param1 = input.get(0);
-          param2 = input.get(1);
-          param3 = input.get(2);
-          attparam1 = input.get(0);
-          attparam2 = input.get(1);
-          attparam3 = input.get(2);
+//          param1 = input.get(0);
+//          param2 = input.get(1);
+//          param3 = input.get(2);
+//          attparam1 = input.get(0);
+//          attparam2 = input.get(1);
+//          attparam3 = input.get(2);
           
+//          System.out.printf("in param %s %s %s", param1, param2, param3);
           
+          result = bi.rollUpByHierarchy(input);
           
-          result = bi.rollUpByHierarchy(param1, param2, param3);
+          for(int i = 0; i < input.size(); i++) {
+        	  dimarr.put( parseParamFirst(input.get(i)) );
+        	  attarr.put( parseParamLast(input.get(i)) );
+          }
+           
           
-
-          
-          
-          param1 = parseParamFirst(param1);
-          param2 = parseParamFirst(param2);
-          param3 = parseParamFirst(param3);
-          
-          dimarr.put(param1);
-          dimarr.put(param2);
-          dimarr.put(param3);
-          
-          
-          attparam1 = parseParamLast(attparam1);
-          attparam2 = parseParamLast(attparam2);
-          attparam3 = parseParamLast(attparam3);
-          
-          attarr.put(attparam1);
-          attarr.put(attparam2);
-          attarr.put(attparam3);
+//          param1 = parseParamFirst(param1);
+//          param2 = parseParamFirst(param2);
+//          param3 = parseParamFirst(param3);
+//          
+//          dimarr.put(param1);
+//          dimarr.put(param2);
+//          dimarr.put(param3);
+//          
+//          
+//          attparam1 = parseParamLast(attparam1);
+//          attparam2 = parseParamLast(attparam2);
+//          attparam3 = parseParamLast(attparam3);
+//          
+//          attarr.put(attparam1);
+//          attarr.put(attparam2);
+//          attarr.put(attparam3);
      
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);
@@ -392,33 +395,37 @@ public class RestfulOrdersJson {
 
         case "drill_down_hierarchy" :
           
-          param1 = input.get(0);
-          param2 = input.get(1);
-          param3 = input.get(2);
-          attparam1 = input.get(0);
-          attparam2 = input.get(1);
-          attparam3 = input.get(2);
+//          param1 = input.get(0);
+//          param2 = input.get(1);
+//          param3 = input.get(2);
+//          attparam1 = input.get(0);
+//          attparam2 = input.get(1);
+//          attparam3 = input.get(2);
          
           
-          result = bi.drillDownByHierarchy(param1, param2, param3);
+          result = bi.drillDownByHierarchy(input);
           
+          for(int i = 0; i < input.size(); i++) {
+        	  dimarr.put( parseParamFirst(input.get(i)) );
+        	  attarr.put( parseParamLast(input.get(i)) );
+          }
           
-          param1 = parseParamFirst(param1);
-          param2 = parseParamFirst(param2);
-          param3 = parseParamFirst(param3);
-          
-          dimarr.put(param1);
-          dimarr.put(param2);
-          dimarr.put(param3);
-          
-          
-          attparam1 = parseParamLast(attparam1);
-          attparam2 = parseParamLast(attparam2);
-          attparam3 = parseParamLast(attparam3);
-          
-          attarr.put(attparam1);
-          attarr.put(attparam2);
-          attarr.put(attparam3);
+//          param1 = parseParamFirst(param1);
+//          param2 = parseParamFirst(param2);
+//          param3 = parseParamFirst(param3);
+//          
+//          dimarr.put(param1);
+//          dimarr.put(param2);
+//          dimarr.put(param3);
+//          
+//          
+//          attparam1 = parseParamLast(attparam1);
+//          attparam2 = parseParamLast(attparam2);
+//          attparam3 = parseParamLast(attparam3);
+//          
+//          attarr.put(attparam1);
+//          attarr.put(attparam2);
+//          attarr.put(attparam3);
      
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);

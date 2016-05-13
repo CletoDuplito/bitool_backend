@@ -292,7 +292,7 @@ public class BITool {
    	 * @return The JSONArray containing the rows of data
    	 * @throws Exception 
    	 */
-	public JSONArray rollUpByHierarchy(String product, String store, String dateTime) throws Exception
+	public JSONArray rollUpByHierarchy(ArrayList<String> params) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -308,14 +308,14 @@ public class BITool {
    			//Execute a query that rolls up the central cube by rolling up the hierarchy
    			System.out.println("Creating statement...");
 		   	String sql;
-		    sql = "SELECT " + product + ", " + store + ", " + dateTime + ", " + "sum(sales.dollar_sales) AS sales_total " +
+		    sql = "SELECT " + String.join(", ", params) + ", " + "sum(sales.dollar_sales) AS sales_total " +
 			   		"FROM Product, Store, Date_time, Sales " +
 			   		"WHERE Sales.product_key = Product.product_key AND " +
 		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
-			   		"GROUP BY " + product + ", " + store + ", " + dateTime;
+			   		"GROUP BY " + String.join(", ", params);
 		    
-		    System.out.println(sql);
-		    rs = statement.executeQuery(sql);
+		    System.out.println("asdasdjhashjdak");
+		    rs = statement.executeQuery(sql); 
 		
 		     //Extract data from result set
 		  /*   while(rs.next()){
@@ -328,7 +328,7 @@ public class BITool {
 			    	}
 		     }*/
 		     
-		     jsonArray = convertRsToJSON(product, store, dateTime, rs);
+		     jsonArray = convertRsToJSON(params, rs);
 		     
    		} //end try
 	   	 finally{
@@ -502,7 +502,7 @@ public class BITool {
     * @return The JSONArray containing the rows of data
     * @throws Exception 
     */
-	public JSONArray drillDownByHierarchy(String product, String store, String dateTime) throws Exception
+	public JSONArray drillDownByHierarchy(ArrayList<String> params) throws Exception
 	{
    		Connection conn = null;
    		Statement statement = null;
@@ -517,12 +517,12 @@ public class BITool {
    			statement = conn.createStatement();
    			//Execute a query that drills down by climbing down the hierarchy
    			System.out.println("Creating statement...");
-		   	 String sql;
-		     sql = "SELECT " + product + ", " + store + ", " + dateTime + ", " + "sum(sales.dollar_sales) AS sales_total " +
+		   	String sql;
+		    sql = "SELECT " + String.join(", ", params) + ", " + "sum(sales.dollar_sales) AS sales_total " +
 			   		"FROM Product, Store, Date_time, Sales " +
 			   		"WHERE Sales.product_key = Product.product_key AND " +
 		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
-			   		"GROUP BY " + product + ", " + store + ", " + dateTime;
+			   		"GROUP BY " + String.join(", ", params);
 		     rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
@@ -535,7 +535,7 @@ public class BITool {
 			    		jsonArray.put(obj);
 			    	}
 		     }*/
-		     jsonArray = convertRsToJSON(product, store, dateTime, rs);
+		     jsonArray = convertRsToJSON(params, rs);
    		} //end try
 	   	 finally{
 			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
