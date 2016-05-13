@@ -1,4 +1,4 @@
-package PO;
+package bitool;
 import edu.cs157b.util.*;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class RestfulOrdersJson {
   
     static BITool bi = new BITool();
 
-    Hw3DAO dao = new Hw3DAO();
+    //Hw3DAO dao = new Hw3DAO();
     ArrayList<String> URLquery = new ArrayList<>();
     
     /**
@@ -290,29 +290,48 @@ case "drill_down_hierarchy" :
           ArrayList<String> dim = new ArrayList<String>();
           ArrayList<String> val = new ArrayList<String>();
           ArrayList<String> temp = new ArrayList<String>();
+          ArrayList<String> param = new ArrayList<String>();
+          ArrayList<String> attparam = new ArrayList<String>();
           
           int lenOfinput = input.size();
           
-          
         
-          param1 = input.get(0);
+        
+          //param1 = input.get(0);
          // param2 = input.get(1);
         //  param3 = input.get(2);
           
-          attparam1 = input.get(0);
+          //attparam1 = input.get(0);
        //   attparam2 = input.get(1);
        //   attparam3 = input.get(2);
           
           //if(param1.contains("+")){
-          for(int i = 0; i < lenOfinput){
+          for(int i = 0; i < lenOfinput; i++){
+            String[] x = new String[0];
+            x = input.get(i).split("\\.");
+            int num = x.length;
+            //x = new String[0];
+           
+            if(num < 3){
+              dim.add(input.get(i));
+              param.add(input.get(i));
+              
+              
+            }else{
+              
+              temp = sliceParse(input.get(i));
+              dim.add(temp.get(0));
+              val.add(temp.get(1));
+              attparam.add(dim.get(0));            
+              //System.out.println(" HELPE " + dim.get(0));
+            //param.add(input.get(i));
+            //attparam.add(input.get(i));
+            }
             
           }
           
-          temp = sliceParse(dimension);
-          dim.add(temp.get(0));
-          val.add(temp.get(1));
+          
              
-              System.out.println(temp.toString());
           //}else{
               //dim.add(param1);
           //}
@@ -335,21 +354,53 @@ case "drill_down_hierarchy" :
           
           result = bi.slice(dim, val);
           
+          int pl = param.size();
+          int al = attparam.size();
+          
+          for(int i = 0; i < pl; i++){
+            String x = param.get(i);
+            
+            param.set(i, parseParamFirst(x));
+            
+            
+          }
+          
+          for(int i = 0; i < al; i++){
+            String x = attparam.get(i);
+            
+            attparam.set(i, parseParamLast(x));
+            
+            
+          }
+          
+          
+          
           param1 = parseParamFirst(param1);
           //param2 = parseParamFirst(param2);
           //param3 = parseParamFirst(param3);
+          for(int i = 0; i < pl; i++){
+            dimarr.put(param.get(i));
+            
+            
+          }
           
-          dimarr.put(param1);
+          for(int i = 0; i < al; i++){
+           attarr.put(attparam.get(i));
+          
+            
+          }
+          
+         // dimarr.put(param);
           //dimarr.put(param2);
           //dimarr.put(param3);
           
           
-          attparam1 = parseParamLast(attparam1);
-          attarr.put(attparam1);
+         // attparam1 = parseParamLast(attparam1);
+         // attarr.put(attparam1);
           //attparam2 = parseParamLast(attparam2);
           //attparam3 = parseParamLast(attparam3);
           
-          dimarr.put(attparam1);
+          //dimarr.put(attparam);
        //   attarr.put(attparam2);
         //  attarr.put(attparam3);
      
