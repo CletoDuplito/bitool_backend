@@ -1,5 +1,4 @@
-package PO;
-import edu.cs157b.util.*;
+package bitool;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,7 +25,6 @@ public class RestfulOrdersJson {
   
     static BITool bi = new BITool();
 
-    Hw3DAO dao = new Hw3DAO();
     ArrayList<String> URLquery = new ArrayList<>();
     
     /**
@@ -45,7 +43,7 @@ public class RestfulOrdersJson {
   //public Response inputURLquery(@QueryParam("action") String action, 
   //public JSONArray inputURLquery(@QueryParam("action") String action, 
                                
-                                  @QueryParam("dimension") String dimension) throws Exception{
+      @QueryParam("dimension") String dimension) throws Exception{
        
       
       ArrayList<String> input = new ArrayList<>();
@@ -243,7 +241,7 @@ public class RestfulOrdersJson {
           dimobj.put("attributes", attarr);
           dimobj.put("data", result);
           
-case "drill_down_hierarchy" :
+        case "drill_down_hierarchy" :
           
           param1 = input.get(0);
           param2 = input.get(1);
@@ -304,9 +302,9 @@ case "drill_down_hierarchy" :
        //   attparam3 = input.get(2);
           
           //if(param1.contains("+")){
-          for(int i = 0; i < lenOfinput){
-            
-          }
+//          for(int i = 0; i < lenOfinput){
+//            
+//          }
           
           temp = sliceParse(dimension);
           dim.add(temp.get(0));
@@ -317,20 +315,20 @@ case "drill_down_hierarchy" :
               //dim.add(param1);
           //}
           /*
-          if(param1.contains("+")){
-              temp = sliceParse(param2);
-              dim.add(temp.get(0));
-              val.add(temp.get(1));
-          }else{
-              dim.add(param2);
-          }
-          if(param1.contains("+")){
-              temp = sliceParse(param3);
-              dim.add(temp.get(0));
-              val.add(temp.get(1));
-          }else{
-              dim.add(param3);
-          }
+	          if(param1.contains("+")){
+	              temp = sliceParse(param2);
+	              dim.add(temp.get(0));
+	              val.add(temp.get(1));
+	          }else{
+	              dim.add(param2);
+	          }
+	          if(param1.contains("+")){
+	              temp = sliceParse(param3);
+	              dim.add(temp.get(0));
+	              val.add(temp.get(1));
+	          }else{
+	              dim.add(param3);
+	          }
           */
           
           result = bi.slice(dim, val);
@@ -350,8 +348,8 @@ case "drill_down_hierarchy" :
           //attparam3 = parseParamLast(attparam3);
           
           dimarr.put(attparam1);
-       //   attarr.put(attparam2);
-        //  attarr.put(attparam3);
+          //attarr.put(attparam2);
+          //attarr.put(attparam3);
      
           dimobj.put("dimension", dimarr);
           dimobj.put("attributes", attarr);
@@ -363,17 +361,30 @@ case "drill_down_hierarchy" :
           break;
         
         case "dice" :
-          //CALL Anacleto SLICE
+    	  System.out.println("This is the dice dimenstion: " + input);
+          ArrayList<String> dimDice = new ArrayList<String>();
+          ArrayList<String> attrDice = new ArrayList<String>();
+          ArrayList<String> cardinalDice = new ArrayList<String>();
+          
+          
+          //getting dimensions
+          for(int i = 0; i < input.size(); i++) {
+        	  String param = input.get(i);
+        	  String[] parsedParam = param.split("\\.");
+        	  dimDice.add(parsedParam[0]);		//store dim key
+        	  attrDice.add(parsedParam[1]);		//store attr
+        	  cardinalDice.add(parsedParam[2]);
+        	  
+        	  System.out.println("This is the dice dimenstion: " + dimDice);
+        	  System.out.println("This is the dice attribute: " + attrDice);
+        	  System.out.println("This is the dice cardinal: " + cardinalDice);
+          }
+          
           break;
-     
-      }  
-      
-      
-    
+          
+      }   
+       
       input.clear();
-
-      
-
       
         //output = "Invalid Action";
      
@@ -398,9 +409,7 @@ case "drill_down_hierarchy" :
      * 
      * @return
      * @throws JSONException
-     */
-    
-    
+     */ 
     public ArrayList<String> sliceParse(String input){
       System.out.println("SliceParser" + input);
       ArrayList<String> sliceResult = new ArrayList<>();
@@ -506,17 +515,6 @@ case "drill_down_hierarchy" :
       
       return dataParsed;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
 
     
     

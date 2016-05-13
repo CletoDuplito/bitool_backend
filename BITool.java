@@ -1,4 +1,4 @@
-package cs157B_Project;
+package bitool;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class BITool {
 
    //  Database credentials
    static final String USER = "root";
-   static final String PASS = "cs157b";
+   static final String PASS = "root";
 
    /**
     * A method that parses the parameter by splitting between '.' character
