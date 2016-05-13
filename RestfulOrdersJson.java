@@ -261,6 +261,8 @@ public class RestfulOrdersJson {
           attparam2 = input.get(1);
           attparam3 = input.get(2);
           
+          
+          
           result = bi.rollUpByHierarchy(param1, param2, param3);
           
 

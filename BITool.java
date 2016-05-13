@@ -107,24 +107,6 @@ public class BITool {
    }
    
    /**
-    * Converts the result set from sql query to JSON object
-    * @param dimensions the array of strings to be added to attributes array
-    * @param rs the result set
-    * @return the JSONArray containing the JSON objects that were converted from Result set
-    * @throws Exception
-    */
-   public JSONArray convertRsToJSON(ArrayList<String> dimensions, ResultSet rs) throws Exception {
-	   ArrayList<String> attr = new ArrayList<>();
-	   JSONArray jsonArray = new JSONArray();
-	   for (int i = 0; i < dimensions.size(); i++) {
-		   attr.add(dimensions.get(i));
-	   }
-       ToJSON rsToJSON = new ToJSON();
-       jsonArray = rsToJSON.toJSONArray(rs, attr);
-       return jsonArray;
-   }
-   
-   /**
     * Returns the objects containing the data table for central cube.
     * @param product the Product's dimension
     * @param store the Store's dimension
@@ -331,6 +313,8 @@ public class BITool {
 			   		"WHERE Sales.product_key = Product.product_key AND " +
 		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
 			   		"GROUP BY " + product + ", " + store + ", " + dateTime;
+		    
+		    System.out.println(sql);
 		    rs = statement.executeQuery(sql);
 		
 		     //Extract data from result set
