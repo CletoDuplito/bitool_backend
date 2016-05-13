@@ -67,6 +67,45 @@ public class BITool {
        return jsonArray;
    }
    
+     public JSONArray convertRsToJSON(String param1, String param2, ResultSet rs) throws Exception {
+	   ArrayList<String> attr = new ArrayList<>();
+	   JSONArray jsonArray = new JSONArray();
+       attr.add(parseParam(param1));
+       attr.add(parseParam(param2));
+       
+       ToJSON rsToJSON = new ToJSON();
+       jsonArray = rsToJSON.toJSONArray(rs, attr);
+       return jsonArray;
+   }
+   
+   public JSONArray convertRsToJSON(String param1, ResultSet rs) throws Exception {
+	   ArrayList<String> attr = new ArrayList<>();
+	   JSONArray jsonArray = new JSONArray();
+       attr.add(parseParam(param1));
+       
+       ToJSON rsToJSON = new ToJSON();
+       jsonArray = rsToJSON.toJSONArray(rs, attr);
+       return jsonArray;
+   }
+   
+   /**
+    * Converts the result set from sql query to JSON object
+    * @param dimensions the array of strings to be added to attributes array
+    * @param rs the result set
+    * @return the JSONArray containing the JSON objects that were converted from Result set
+    * @throws Exception
+    */
+   public JSONArray convertRsToJSON(ArrayList<String> dimensions, ResultSet rs) throws Exception {
+	   ArrayList<String> attr = new ArrayList<>();
+	   JSONArray jsonArray = new JSONArray();
+	   for (int i = 0; i < dimensions.size(); i++) {
+		   attr.add(dimensions.get(i));
+	   }
+       ToJSON rsToJSON = new ToJSON();
+       jsonArray = rsToJSON.toJSONArray(rs, attr);
+       return jsonArray;
+   }
+   
    /**
     * Converts the result set from sql query to JSON object
     * @param dimensions the array of strings to be added to attributes array
@@ -149,6 +188,119 @@ public class BITool {
    		return jsonArray; 
 	} //central cube
    
+   	public JSONArray centralCube(String param1, String param2) throws Exception
+	{
+   		Connection conn = null;
+   		PreparedStatement statement = null;
+   		ResultSet rs = null;
+   	    JSONArray jsonArray = new JSONArray();
+   		try {
+		    //Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
+		    System.out.println("Connecting to database...");
+		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
+   			
+   			//Execute a query that returns the central cube
+   			System.out.println("Creating statement...");
+		   	 String sql;
+		   	sql = "SELECT " + param1 + ", " + param2 + ", " + "sum(sales.dollar_sales) AS sales_total " +
+			   		"FROM Product, Store, Date_time, Sales " +
+			   		"WHERE Sales.product_key = Product.product_key AND " +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
+			   		"GROUP BY " + param1 +", " + param2;
+		   	 statement = conn.prepareStatement(sql);
+		     /*statement.setString(1,  product);
+		     statement.setString(2, store);
+		     statement.setString(3, dateTime);*/
+		     rs = statement.executeQuery(sql);
+		     
+		    /* //Extract data from result set
+		     while(rs.next()){
+		    	int total_rows = rs.getMetaData().getColumnCount();
+		    	JSONObject obj = new JSONObject();
+		    	for (int i = 0; i < total_rows; i++) {
+		    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+		    				rs.getObject(i + 1));
+		    		jsonArray.put(obj);
+		    	}
+		    	}*/
+		     /*ArrayList<String> attr = new ArrayList<>();
+	         attr.add(parseParam(product));
+	         attr.add(parseParam(store));
+	         attr.add(parseParam(dateTime));
+	         
+	         ToJSON rsToJSON = new ToJSON();
+
+	         jsonArray = rsToJSON.toJSONArray(rs, attr);*/
+	         jsonArray = convertRsToJSON(param1, param2, rs);
+		     
+   		} //end try
+	   	 finally{
+			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+			  if (statement != null) try { statement.close(); } catch (SQLException ignore) {}
+			  System.out.println("Closing....");
+			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
+		   } //end finally 
+   		return jsonArray; 
+	} //central cube with 2 dimensions
+   	
+	
+	
+	public JSONArray centralCube(String param1) throws Exception
+	{
+   		Connection conn = null;
+   		PreparedStatement statement = null;
+   		ResultSet rs = null;
+   	    JSONArray jsonArray = new JSONArray();
+   		try {
+		    //Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
+		    System.out.println("Connecting to database...");
+		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
+   			
+   			//Execute a query that returns the central cube
+   			System.out.println("Creating statement...");
+		   	 String sql;
+		   	sql = "SELECT " + param1 + ", " + "sum(sales.dollar_sales) AS sales_total " +
+			   		"FROM Product, Store, Date_time, Sales " +
+			   		"WHERE Sales.product_key = Product.product_key AND " +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
+			   		"GROUP BY " + param1;
+		   	 statement = conn.prepareStatement(sql);
+		     /*statement.setString(1,  product);
+		     statement.setString(2, store);
+		     statement.setString(3, dateTime);*/
+		     rs = statement.executeQuery(sql);
+		     
+		    /* //Extract data from result set
+		     while(rs.next()){
+		    	int total_rows = rs.getMetaData().getColumnCount();
+		    	JSONObject obj = new JSONObject();
+		    	for (int i = 0; i < total_rows; i++) {
+		    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+		    				rs.getObject(i + 1));
+		    		jsonArray.put(obj);
+		    	}
+		    	}*/
+		     /*ArrayList<String> attr = new ArrayList<>();
+	         attr.add(parseParam(product));
+	         attr.add(parseParam(store));
+	         attr.add(parseParam(dateTime));
+	         
+	         ToJSON rsToJSON = new ToJSON();
+
+	         jsonArray = rsToJSON.toJSONArray(rs, attr);*/
+	         jsonArray = convertRsToJSON(param1, rs);
+		     
+   		} //end try
+	   	 finally{
+			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+			  if (statement != null) try { statement.close(); } catch (SQLException ignore) {}
+			  System.out.println("Closing....");
+			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
+		   } //end finally 
+   		return jsonArray; 
+	} //central cube with 1 dimension
    	
    	/**
    	 * Returns the objects containing the data table for rolling up by concept hierarchy
@@ -204,6 +356,99 @@ public class BITool {
    		return jsonArray; 
 	} //roll up by hierarchy
    	
+   	public JSONArray rollUpByHierarchy(String param1, String param2) throws Exception
+	{
+   		Connection conn = null;
+   		Statement statement = null;
+   		ResultSet rs = null;
+   		JSONArray jsonArray = new JSONArray();
+   		try {
+   			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
+		    System.out.println("Connecting to database...");
+		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
+   			
+   			statement = conn.createStatement();
+   			//Execute a query that rolls up the central cube by rolling up the hierarchy
+   			System.out.println("Creating statement...");
+		   	String sql;
+		    sql = "SELECT " + param1 + ", " + param2 + ", " + "sum(sales.dollar_sales) AS sales_total " +
+			   		"FROM Product, Store, Date_time, Sales " +
+			   		"WHERE Sales.product_key = Product.product_key AND " +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
+			   		"GROUP BY " + param1 + ", " + param2;
+		    rs = statement.executeQuery(sql);
+		
+		     //Extract data from result set
+		  /*   while(rs.next()){
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
+		     }*/
+		     
+		     jsonArray = convertRsToJSON(param1, param2, rs);
+		     
+   		} //end try
+	   	 finally{
+			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+			  if (statement != null) try { statement.close(); } catch (SQLException ignore) {}
+			  System.out.println("Closing....");
+			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
+		   } //end finally 
+   		return jsonArray; 
+	} //roll up by hierarchy
+	
+	
+	
+	public JSONArray rollUpByHierarchy(String param1) throws Exception
+	{
+   		Connection conn = null;
+   		Statement statement = null;
+   		ResultSet rs = null;
+   		JSONArray jsonArray = new JSONArray();
+   		try {
+   			//Open a connection
+   			Class.forName(JDBC_DRIVER).newInstance();
+		    System.out.println("Connecting to database...");
+		    conn = DriverManager.getConnection(DB_URL,USER,PASS);
+   			
+   			statement = conn.createStatement();
+   			//Execute a query that rolls up the central cube by rolling up the hierarchy
+   			System.out.println("Creating statement...");
+		   	String sql;
+		    sql = "SELECT " + param1 + ", " + "sum(sales.dollar_sales) AS sales_total " +
+			   		"FROM Product, Store, Date_time, Sales " +
+			   		"WHERE Sales.product_key = Product.product_key AND " +
+		    		"Sales.store_key = Store.store_key AND Sales.time_key = Date_time.time_key " +
+			   		"GROUP BY " + param1;
+		    rs = statement.executeQuery(sql);
+		
+		     //Extract data from result set
+		  /*   while(rs.next()){
+		    	 int total_rows = rs.getMetaData().getColumnCount();
+			    	JSONObject obj = new JSONObject();
+			    	for (int i = 0; i < total_rows; i++) {
+			    		obj.put(rs.getMetaData().getColumnLabel(i+ 1).toLowerCase(),
+			    				rs.getObject(i + 1));
+			    		jsonArray.put(obj);
+			    	}
+		     }*/
+		     
+		     jsonArray = convertRsToJSON(param1, rs);
+		     
+   		} //end try
+	   	 finally{
+			  if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+			  if (statement != null) try { statement.close(); } catch (SQLException ignore) {}
+			  System.out.println("Closing....");
+			  if (conn != null) try { conn.close(); } catch (SQLException ignore) {} 
+		   } //end finally 
+   		return jsonArray; 
+	} //roll up by hierarchy
    	
 	/**
 	 * Returns the objects containing the data table for removing a dimension
